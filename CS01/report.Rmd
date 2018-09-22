@@ -19,14 +19,19 @@ if (!require(devtools, quietly = TRUE)){
  if (!require(broom, quietly = TRUE)){
        devtools::install_github("dgrtwo/broom")
       }
-if (!require(GGally, quietly = TRUE)){
-      install.packages("GGally")
-}
+if (!require(ExpDE, quietly = TRUE)){
+        install.packages("ExpDE")
+      }
+if (!require(cowplot, quietly = TRUE, warn.conflicts = FALSE)){
+        install.packages("cowplot")
+      }
 ```
-## Summary
-This document provides a template for the Case Study reports. Reports should always start a short executive summary (call it an _Abstract_ if you want) to give the reader a general idea of the topic under investigation, the kind of analysis performed, the results obtained, and the general recommendations of the authors.
+## Resumo
+Este trabalho consiste no primeiro estudo de caso da disciplina de Planejamento e Análise de Experimentos. Nele, foram executados testes para a avaliar se o desempenho de uma nova versão de software é superior ao da anterior. A média e a variância do custo de execução foram as variáveis escolhidas para fazer essa medida, sendo que a versão atual do software possui um custo de execução dado por uma distribuição conhecida. \textcolor{red}{Os resultados alcançados <!-- !TODO - Adicionar resultados ao resumo --> ...}
 
-## Experimental design
+## Planejamento do Experimento
+
+### Teste da média
 A section detailing the experimental setup. This is the place where you will define your test hypotheses, e.g.:
 $$\begin{cases} H_0: \mu = 10&\\H_1: \mu<10\end{cases}$$
 
@@ -34,12 +39,18 @@ including the reasons behind your choices of the value for $H_0$ and the directi
 
 This is also the place where you should discuss (whenever necessary) your definitions of minimally relevant effects ($\delta^*$), sample size calculations, choice of power and significance levels, and any other relevant information about specificities in your data collection procedures.
 
-### Description of the data collection
-Whenever needed, you can also include an (optional) subsection describing the actual data collection, how it was performed, any adaptations or unexpected events that may have occurred, etc. Subsections like this can also be used for the sample size calculations or any other aspect that requires a longer discussion.
+### Teste da variância
+A section detailing the experimental setup. This is the place where you will define your test hypotheses, e.g.:
+$$\begin{cases} H_0: \mu = 10&\\H_1: \mu<10\end{cases}$$
 
-## Exploratory Data Analysis
-The first step is to load and preprocess the data. For instance,
-```{r loaddata}
+including the reasons behind your choices of the value for $H_0$ and the directionality (or not) of $H_1$. 
+
+This is also the place where you should discuss (whenever necessary) your definitions of minimally relevant effects ($\delta^*$), sample size calculations, choice of power and significance levels, and any other relevant information about specificities in your data collection procedures.
+
+### Coleta de Dados
+A coleta de dados foi simulada a partir da rotina sugerida no caso de uso, com uma pequena modificação: uma *seed* foi definida para a execução do programa, de forma a garantir sua reproducibilidade.
+```{r dataCollection, results='hide'}
+# Loading required package
 library(ExpDE)
 mre <- list(name = "recombination_bin", cr = 0.9) 
 mmu <- list(name = "mutation_rand", f = 2)
@@ -47,39 +58,62 @@ mpo <- 100
 mse <- list(name  = "selection_standard")
 mst <- list(names = "stop_maxeval", maxevals = 10000)
 mpr <- list(name  = "sphere", xmin  = -seq(1, 20), xmax  = 20 + 5 * seq(5, 24))
-set.seed(1998)  # <--- ATTENTION: USE THE BIRTH YEAR OF YOUNGEST TEAM MEMBER
 
+# Setting seed so the program can be reproduced.
+set.seed(1998)
+
+# One sample
+ExpDE(mpo, mmu, mre, mse, mst, mpr,
+               showpars = list(show.iters = "none"))$Fbest
+```
+Em nossos experimentos, precisaremos coletar um número arbitrário **N** de amostras. Portanto, a partir das rotinas acima, foram criadas duas funções para essa coleta:
+
+- *generate\_sample* : Coleta uma única amostra.
+- *generate\_n\_samples* : Coleta **n** amostras no formato de um *data.frame*.
+
+Segue abaixo a codificação dessas funções, bem como um exemplo da chamada de *generate\_n\_samples* para $N=10$:
+```{r dataCollectionNewRoutines, results='hide'}  
+#Generates one sample
 generate_sample <- function() {
   return(ExpDE(mpo, mmu, mre, mse, mst, mpr,
                showpars = list(show.iters = "none"))$Fbest);
 }
 
+#Generates n samples on the data.frame format
 generate_n_samples <- function(n) {
   cost <- replicate(n, generate_sample())
   return(data.frame(cost))
 }
 
-N <- 30
+#Example for N=10
+generate_n_samples(10)
+```
 
+## Análise Exploratória dos Dados
+The first step is to load and preprocess the data. For instance,
+```{r loaddata}
+N <- 30
 samples <- generate_n_samples(N)
 ```
 
 To get an initial feel for the relationships between the relevant variables of your experiment it is frequently interesting to perform some preliminary (exploratory) analysis. This is frequently referred to as _getting a feel_ of your data, and can suggest procedures (such as outlier investigation or data transformations) to experienced experimenters.
 
 ```{r pairs,fig.width=8,echo=TRUE,message=FALSE,fig.cap="Exploring the effect of car transmission on mpg values"}
-library(cowplot)
+library(cowplot,warn.conflicts = FALSE)
 
 theme_set(theme_cowplot(font_size=12))
 
 plot.hist <- ggplot(samples, aes(x=cost)) +
     geom_histogram(colour="black", fill="white") + background_grid(major = 'xy')
 
-plot.dens <- ggplot(samples, aes(x=cost)) + geom_density(alpha=.2, fill="#FF6666") + background_grid(major = 'xy')
+plot.dens <- ggplot(samples, aes(x=cost)) + 
+    geom_density(alpha=.2, fill="#FF6666") + 
+    background_grid(major = 'xy')
 
 plot_grid(plot.hist, plot.dens, labels = c('A','B'), ncol = 2)
 ```
 
-Your preliminary analysis should be described together with the plots. In this example, two facts are immediately clear from the plots: first, **mpg** tends to correlate well with many of the other variables, most intensely with **drat** (positively) and **wt** (negatively). It is also clear that many of the variables are highly correlated (e.g., **wt** and **disp**). Second, it seems like manual transmission models present larger values of **mpg** than the automatic ones. In the next section a linear model will be fit to the data in order to investigate the significance and magnitude of this possible effect.
+Your preliminary analysis should be described together with the plots. In this example, two facts are immediately clear from the plots: first, **mpg** tends to correlate well with many of the other  variables, most intensely with **drat** (positively) and **wt** (negatively). It is also clear that many of the variables are highly correlated (e.g., **wt** and **disp**). Second, it seems like manual transmission models present larger values of **mpg** than the automatic ones. In the next section a linear model will be fit to the data in order to investigate the significance and magnitude of this possible effect.
 
 ## Statistical Analysis
 Your statistical analysis should come here. This is the place where you should fit your statistical model, get the results of your significance test, your effect size estimates and confidence intervals.

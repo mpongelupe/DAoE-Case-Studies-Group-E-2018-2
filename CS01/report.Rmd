@@ -1,7 +1,7 @@
 ---
-title: 'Case Study 00: This is a template'
-author: "Author 1 and Author 2"
-date: "March 00, 2015"
+title: 'Estudo de Caso 01: Desempenho de uma nova versão de Software'
+author: "André Boechat, Mateus Pongelupe, Samuel Leite"
+date: "24 de Setembro de 2018"
 output:
   pdf_document:
     fig_caption: yes
@@ -21,26 +21,10 @@ if (!require(devtools, quietly = TRUE)){
       }
 if (!require(GGally, quietly = TRUE)){
       install.packages("GGally")
-      }
+}
 ```
 ## Summary
 This document provides a template for the Case Study reports. Reports should always start a short executive summary (call it an _Abstract_ if you want) to give the reader a general idea of the topic under investigation, the kind of analysis performed, the results obtained, and the general recommendations of the authors.
-
-There are (at least) two ways to render this document to **pdf** in R: one easy and one... well, less easy.
-
-### 1. The easy way
-Use [RStudio](http://rstudio.com/) as your editor, open the **.Rmd** file and click the _Knit PDF_ button at the top of the editor.
-
-### 2. The slightly-less-easy way
-If you're using any other R editor (such as the basic [R](http://cran.r-project.org) editor), you have to use the _render()_ function from the **rmarkdown** package:
-
-```{r, eval=F}
-install.packages("devtools")                    # you only have to install it once
-library(devtools)
-install_github("rstudio/rmarkdown")             # you only have to install it once
-library(rmarkdown)
-render("report_template.Rmd","pdf_document")    # this renders the pdf
-```
 
 ## Experimental design
 A section detailing the experimental setup. This is the place where you will define your test hypotheses, e.g.:
@@ -56,22 +40,44 @@ Whenever needed, you can also include an (optional) subsection describing the ac
 ## Exploratory Data Analysis
 The first step is to load and preprocess the data. For instance,
 ```{r loaddata}
-data(mtcars)
-fc<-c(2,8:11)
-for (i in 1:length(fc)){mtcars[,fc[i]]<-as.factor(mtcars[,fc[i]])}
-levels(mtcars$am) <- c("Automatic","Manual")
+library(ExpDE)
+mre <- list(name = "recombination_bin", cr = 0.9) 
+mmu <- list(name = "mutation_rand", f = 2)
+mpo <- 100
+mse <- list(name  = "selection_standard")
+mst <- list(names = "stop_maxeval", maxevals = 10000)
+mpr <- list(name  = "sphere", xmin  = -seq(1, 20), xmax  = 20 + 5 * seq(5, 24))
+set.seed(1998)  # <--- ATTENTION: USE THE BIRTH YEAR OF YOUNGEST TEAM MEMBER
+
+generate_sample <- function() {
+  return(ExpDE(mpo, mmu, mre, mse, mst, mpr,
+               showpars = list(show.iters = "none"))$Fbest);
+}
+
+generate_n_samples <- function(n) {
+  cost <- replicate(n, generate_sample())
+  return(data.frame(cost))
+}
+
+N <- 30
+
+samples <- generate_n_samples(N)
 ```
 
 To get an initial feel for the relationships between the relevant variables of your experiment it is frequently interesting to perform some preliminary (exploratory) analysis. This is frequently referred to as _getting a feel_ of your data, and can suggest procedures (such as outlier investigation or data transformations) to experienced experimenters.
 
 ```{r pairs,fig.width=8,echo=TRUE,message=FALSE,fig.cap="Exploring the effect of car transmission on mpg values"}
-library(GGally,quietly = T, warn.conflicts = F) # This is just me getting fancy.
-                                                # There are much simpler ways ;-)
-ggpairs(data=mtcars,columns=c(1,9),title="MPG by transmission type",
-        upper=list(combo="box"),lower=list(combo="facethist"),
-        diag=list(continuous="density",discrete="bar"))
-```
+library(cowplot)
 
+theme_set(theme_cowplot(font_size=12))
+
+plot.hist <- ggplot(samples, aes(x=cost)) +
+    geom_histogram(colour="black", fill="white") + background_grid(major = 'xy')
+
+plot.dens <- ggplot(samples, aes(x=cost)) + geom_density(alpha=.2, fill="#FF6666") + background_grid(major = 'xy')
+
+plot_grid(plot.hist, plot.dens, labels = c('A','B'), ncol = 2)
+```
 
 Your preliminary analysis should be described together with the plots. In this example, two facts are immediately clear from the plots: first, **mpg** tends to correlate well with many of the other variables, most intensely with **drat** (positively) and **wt** (negatively). It is also clear that many of the variables are highly correlated (e.g., **wt** and **disp**). Second, it seems like manual transmission models present larger values of **mpg** than the automatic ones. In the next section a linear model will be fit to the data in order to investigate the significance and magnitude of this possible effect.
 

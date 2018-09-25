@@ -1,6 +1,6 @@
 ---
 title: 'Estudo de Caso 01: Desempenho de uma nova versão de Software'
-author: "André Boechat, Mateus Pongelupe, Samuel Leite"
+author: "André Boechat(Checker), Mateus Pongelupe(Coordinator), Samuel Leite(Recorder)"
 date: "24 de Setembro de 2018"
 header-includes:
   - \usepackage[brazilian]{babel}
@@ -42,7 +42,7 @@ rm(list = ls())
 Este trabalho consiste no primeiro estudo de caso da disciplina de Planejamento e Análise de Experimentos. Nele, foram executados testes para a avaliar se o desempenho de uma nova versão de software é superior ao da anterior. A média e a variância do custo de execução foram as variáveis escolhidas para fazer essa medida, sendo que a versão atual do software possui um custo de execução dado por uma distribuição conhecida. Os resultados alcançados não suportam a afirmativa que o desempenho da nova versão é superior em termos da média do custo de execução, mas suportam a hipótese de que a variância do custo de execução é menor para a nova versão.
 
 ## Planejamento do Experimento
-Nesse experimento, está sendo avaliado o desempenho de uma nova versão de software. É conhecido que a versão atual do software possui uma distribuição para seu custo de execução com média populacional $\mu=50$ e variância populacional $\sigma^2=100$. Para a nova versão do softare deseja-se investigar seus resultados quanto a melhorias de desempenho, isto é, menor custo médio de execução e/ou menor variância. Com esse intuito, foram desenvolvidos dois experimentos: um para availar a média e outro para availar a variância.
+Nesse experimento, está sendo avaliado o desempenho de uma nova versão de software. É conhecido que a versão atual do software possui uma distribuição para seu custo de execução com média populacional $\mu=50$ e variância populacional $\sigma^2=100$. Para a nova versão do software deseja-se investigar seus resultados quanto a melhorias de desempenho, isto é, menor custo médio de execução e/ou menor variância. Com esse intuito, foram desenvolvidos dois experimentos: um para avaliar a média e outro para avaliar a variância.
 
 ### Teste da média
 Para avaliar se o desempenho do novo software é melhor que a versão antiga, está sendo observado se a média do custo de execução é menor. Assim, ao definir a hipótese $H_1$, podemos fazer com que ela seja unidirecional, isto é, a região de interesse do teste está na direção em que a média de execução da nova versão seja menor que a média atual. Dessa forma, a hipótese nula $H_0$ e a hipótese $H_1$ podem ser definidas como:
@@ -70,22 +70,22 @@ $$P(z_{\alpha} \leq Z_0 \; | \; H_0 \text{ seja verdadeira})$$
 Isto é, para que a hipótese nula seja rejeitada com um nível de confiança de 99% é preciso que $z_\alpha > Z_0$. 
 
 ### Teste da variância
-O teste da variância permite com que seja avaliado como está se comportando a nova versão do software em relação à variabilidade dos custos. Definem-se, portanto, duas hipóteses. A primeira, na qual a variancia do novo processo é mantida constante e a segunda, na qual há. 
+O teste da variância permite com que seja avaliado como está se comportando a nova versão do software em relação à variabilidade dos custos. Definem-se, portanto, duas hipóteses. A primeira, na qual a variância do novo processo é mantida constante e a segunda, na qual há. 
 $$\begin{cases} H_0: \mu = 100&\\H_1: \mu<100\end{cases}$$
 Para esse teste, definiu-se um nível de significância de $\alpha=0.05$.
 
-O teste utiilizado para verificar essas hipóteses foi o $\chi^2$.
+O teste utilizado para verificar essas hipóteses foi o $\chi^2$.
 
-De acordo com a Teorica, para fazer esse teste é necessário calcular o valor de $\chi^2$ e se comparar de acordo com um valor tabelado. 
+De acordo com a Teórica, para fazer esse teste é necessário calcular o valor de $\chi^2$ e se comparar de acordo com um valor tabelado. 
 $$\chi^2 = S^2(N-1)/\sigma^2$$
 A Região Crítica, nessa distribuição, para o caso onde está se testando uma amostra de valor menor que a hipótese nula, é:
 $$ P ( \chi^2 < \chi^2_c) = \alpha $$ 
 Rejeita-se a hipótese nula se o valor da estatística pertencer à região crítica.
 
-Dentro do pacote EnvStats, há a função *varTest*, que faz o teste da variância de acordo com três métodos: bilateral, menor ou maior (two-sided, less e greater). 
+Dentro do pacote _EnvStats_, há a função *varTest*, que faz o teste da variância de acordo com três métodos: bilateral, menor ou maior (two-sided, less e greater). 
 
 ### Coleta de Dados
-A coleta de dados foi simulada a partir da rotina sugerida no caso de uso, com uma pequena modificação: uma *seed* foi definida para a execução do programa, de forma a garantir sua reproducibilidade.
+A coleta de dados foi simulada a partir da rotina sugerida no caso de uso, com uma pequena modificação: uma *seed* foi definida para a execução do programa, de forma a garantir sua reprodutibilidade.
 ```{r dataCollection, results='hide'}
 # Loading required package
 library(ExpDE)
@@ -126,7 +126,7 @@ generate_n_samples <- function(n) {
 generate_n_samples(10)
 ```
 
-## Análise Estatístiica
+## Análise Estatística
 
 ### Teste da Média
 
@@ -163,13 +163,15 @@ O teste foi executado conforme explicado na seção *Teste da Variância*.
 
 ```{r test2, echo=TRUE, message=FALSE, warning=FALSE}
 library(EnvStats)
-varTest(unlist(t1.samples), alternative = "less", conf.level = 0.95, sigma.squared =100) ## Foi utilizada a função unlist(t1.samples) para garantir que a variável t1.samples estivesse no data type correto.
+varTest(unlist(t1.samples), alternative = "less", conf.level = 0.95, sigma.squared =100)
+## Foi utilizada a função unlist(t1.samples) para garantir que a variável t1.samples 
+## estivesse no data type correto.
 ```
 
 Como o valor de $P$ calculado é menor do que o valor de $\alpha$, é possível afirmar que a hipótese nula está negada e a variância do novo teste é, portanto, inferior à variância do processo original.  
 
-#### Avaliando suposições do modelo
-A validação das suposições de um experimento é um passo importante de uma análise de experimento. Não apenas permite verificá-las e como também identiicar possíveis efeitos nos resultados encontrados, decorrentes de violações das premissas do planejamento experimental.
+### Avaliando suposições do modelo
+A validação das suposições de um experimento é um passo importante de uma análise de experimento. Não apenas permite verificá-las e como também identificar possíveis efeitos nos resultados encontrados, decorrentes de violações das premissas do planejamento experimental.
  
 Ao fazer o teste da média, foi suposta uma distribuição normal das amostras. Para avaliar essa suposição, o teste de Shapiro-Wilk é uma boa alternativa. Trata-se de um teste de normalidade que assume uma hipótese nula de que a distribuição de um conjunto de dados é normal. O resultado do teste fornece um valor $p$ que, se menor que o nível $\alpha$ desejado, permite rejeitar a hipótese nula. Para o método padrão disponível no R, o valor de $p < 0,05$ indica que não á uma distribuição normal.
 
@@ -207,15 +209,21 @@ Os gráficos da figura seguinte, o histograma e o gráfico de densidade ajudam a
 
 ## Conclusões e Recomendações
 
-O estudo conduzido nesse trabalho mirou avaliar o desempenho de uma nova versão de um software em comparação a sua versão anterior, cujo custo de execução é bem representado por uma distribuição populacional de média $\mu = 50$ e variância $\sigma^2=100$. Para tal, foram empregados métodos estatísticos provenientes das aulas da disciplina de Planejamento e Análise de Experimentos em ensaios acerca da média e da variância do custo de execução do novo software. No teste da média foi empregado o teste Z, haja vista a premissa que o comportamento da função era normal com variância semelhante ao da função comparada. \textcolor{red}{Adicionar aqui o teste empregado para a variância <!-- !TODO - Adicionar teste da variância --> ...}
+O estudo conduzido nesse trabalho mirou avaliar o desempenho de uma nova versão de um software em comparação a sua versão anterior, cujo custo de execução é bem representado por uma distribuição populacional de média $\mu = 50$ e variância $\sigma^2=100$. Para tal, foram empregados métodos estatísticos provenientes das aulas da disciplina de Planejamento e Análise de Experimentos em ensaios acerca da média e da variância do custo de execução do novo software. No teste da média foi empregado o teste Z, haja vista a premissa que o comportamento da função era normal com variância semelhante ao da função comparada. Foi empregado o Teste de Hipóteses com base em uma distribuição $\chi^2$ para analisar a alteração da variância no novo software.
 
 Com relação ao teste da média, ele falhou em refutar a hipótese nula, isto é, ele foi incapaz de afirmar ao nível de significância de 99% que a nova versão do software possui um custo médio de execução mais baixo. Portanto, o teste executado não suporta a hipótese de que a nova versão do software possui um desempenho superior à versão anterior em termos da média do custo de execução. Apesar disso, a partir dos dados colhidos, foi estimado o intervalo de confiança para a média $\mu_1$, com um grau de confiança de 99%: $\mu_1 \in [47.53 , 54.04]$. Quanto a esse intervalo, observa-se que o seu centro é um pouco superior a 50 e que os limites do intervalo batem, aproximadamente, com o efeito de relevância mínima que este teste buscou detectar.       
 
 Posteriormente ao teste, em um momento de análise das premissas, verificou-se que a distribuição das amostras não era normal. A violação dessa premissa explica um pouco como o resultado do experimento pode ter sido distorcido, talvez pelo uso de procedimentos não adequados para o caso. Entre esses procedimentos, pode-se citar o teste Z, em que foi considerada a variância populacional da versão anterior, e o procedimento de seleção da amostra/cálculo da média.
 
-Tendo ciência disso, uma alternativa seria a execução do teste T, que considera a variância da amostra retirada. Outra alternativa seria um tratamento/descarte de amostras expúrias ou que estão nas "pontas" da distribuição das amostras, de forma a atenuar o efeito que essas observações têm na distribuição das amostras.  
+Tendo ciência disso, uma alternativa seria a execução do teste T, que considera a variância da amostra retirada. Outra alternativa seria um tratamento/descarte de amostras espúrias ou que estão nas "pontas" da distribuição das amostras, de forma a atenuar o efeito que essas observações têm na distribuição das amostras.
 
-\textcolor{red}{Adicionar aqui considerações para o teste da variância <!-- !TODO - Adicionar teste da variância --> ...}
+O Teste de Variância foi realizado seguindo-se a premissa de que a distribuição segue uma tendência $\chi^2$. Apesar de o teste afirmar que a variância da amostra pode ser considerada como inferior à variância original $\sigma^2=100$, a premissa de que a distribuição amostral pode ser considerada como normal foi refutada. Portanto, a modelagem dessa distribuição em um padrão qui-quadrático fica também contestada. Ainda, os intervalos de confiança calculados estão bem distante do valor da variância da amostra e esse valor é bem inferior ao valor original.
 
 
 ## Referências
+- R Man Pages - asbio package - https://rdrr.io/cran/asbio/man/power.z.test.html
+- R Man Pages - car package - https://rdrr.io/cran/car/man/qqPlot.html
+- Statistics R Tutorial - https://www.cyclismo.org/tutorial/R/confidence.html
+- Montgomery, Douglas C. - Applied statistics and probabiliy for engineers (3ª Edição) - Capítulos 8,9
+- Notas de Aula - https://github.com/fcampelo/Design-and-Analysis-of-Experiments
+- Notas - https://edisciplinas.usp.br/pluginfile.php/2063723/mod_resource/content/0/Aula11-2016.pdf

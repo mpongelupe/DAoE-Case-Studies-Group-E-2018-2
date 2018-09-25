@@ -39,7 +39,7 @@ if (!require(EnvStats, quietly = TRUE, warn.conflicts = FALSE)){
 rm(list = ls())
 ```
 ## Resumo
-Este trabalho consiste no primeiro estudo de caso da disciplina de Planejamento e Análise de Experimentos. Nele, foram executados testes para a avaliar se o desempenho de uma nova versão de software é superior ao da anterior. A média e a variância do custo de execução foram as variáveis escolhidas para fazer essa medida, sendo que a versão atual do software possui um custo de execução dado por uma distribuição conhecida. Os resultados alcançados não suportam a afirmativa que o desempenho da nova versão é superior em termos da média do custo de execução, mas suportam a hipótese de que a variância do custo de execução é menor para a nova versão.
+Este trabalho consiste no primeiro estudo de caso da disciplina de Planejamento e Análise de Experimentos. Nele, foram executados testes para a avaliar se o desempenho de uma nova versão de software é superior ao da anterior. A média e a variância do custo de execução foram as variáveis escolhidas para fazer essa medida, sendo que a versão atual do software possui um custo de execução dado por uma distribuição conhecida. \textcolor{red}{Os resultados alcançados <!-- !TODO - Adicionar resultados ao resumo --> ...}
 
 ## Planejamento do Experimento
 Nesse experimento, está sendo avaliado o desempenho de uma nova versão de software. É conhecido que a versão atual do software possui uma distribuição para seu custo de execução com média populacional $\mu=50$ e variância populacional $\sigma^2=100$. Para a nova versão do softare deseja-se investigar seus resultados quanto a melhorias de desempenho, isto é, menor custo médio de execução e/ou menor variância. Com esse intuito, foram desenvolvidos dois experimentos: um para availar a média e outro para availar a variância.
@@ -70,19 +70,11 @@ $$P(z_{\alpha} \leq Z_0 \; | \; H_0 \text{ seja verdadeira})$$
 Isto é, para que a hipótese nula seja rejeitada com um nível de confiança de 99% é preciso que $z_\alpha > Z_0$. 
 
 ### Teste da variância
-O teste da variância permite com que seja avaliado como está se comportando a nova versão do software em relação à variabilidade dos custos. Definem-se, portanto, duas hipóteses. A primeira, na qual a variancia do novo processo é mantida constante e a segunda, na qual há. 
-$$\begin{cases} H_0: \mu = 100&\\H_1: \mu<100\end{cases}$$
-Para esse teste, definiu-se um nível de significância de $\alpha=0.05$.
+A section detailing the experimental setup. This is the place where you will define your test hypotheses, e.g.:
+$$\begin{cases} H_0: \mu = 10&\\H_1: \mu<10\end{cases}$$
+including the reasons behind your choices of the value for $H_0$ and the directionality (or not) of $H_1$. 
 
-O teste utiilizado para verificar essas hipóteses foi o $\chi^2$.
-
-De acordo com a Teorica, para fazer esse teste é necessário calcular o valor de $\chi^2$ e se comparar de acordo com um valor tabelado. 
-$$\chi^2 = S^2(N-1)/\sigma^2$$
-A Região Crítica, nessa distribuição, para o caso onde está se testando uma amostra de valor menor que a hipótese nula, é:
-$$ P ( \chi^2 < \chi^2_c) = \alpha $$ 
-Rejeita-se a hipótese nula se o valor da estatística pertencer à região crítica.
-
-Dentro do pacote EnvStats, há a função *varTest*, que faz o teste da variância de acordo com três métodos: bilateral, menor ou maior (two-sided, less e greater). 
+This is also the place where you should discuss (whenever necessary) your definitions of minimally relevant effects ($\delta^*$), sample size calculations, choice of power and significance levels, and any other relevant information about specificities in your data collection procedures.
 
 ### Coleta de Dados
 A coleta de dados foi simulada a partir da rotina sugerida no caso de uso, com uma pequena modificação: uma *seed* foi definida para a execução do programa, de forma a garantir sua reproducibilidade.
@@ -126,6 +118,32 @@ generate_n_samples <- function(n) {
 generate_n_samples(10)
 ```
 
+<!-- ## Análise Exploratória dos Dados -->
+<!-- The first step is to load and preprocess the data. For instance, -->
+<!-- ```{r loaddata} -->
+<!-- N <- 30 -->
+<!-- samples <- generate_n_samples(N) -->
+<!-- ``` -->
+
+<!-- To get an initial feel for the relationships between the relevant variables of your experiment it is frequently interesting to perform some preliminary (exploratory) analysis. This is frequently referred to as _getting a feel_ of your data, and can suggest procedures (such as outlier investigation or data transformations) to experienced experimenters. -->
+
+<!-- ```{r pairs,fig.width=8,echo=TRUE,message=FALSE,fig.cap="Exploring the effect of car transmission on mpg values"} -->
+<!-- library(cowplot,warn.conflicts = FALSE) -->
+
+<!-- theme_set(theme_cowplot(font_size=12)) -->
+
+<!-- plot.hist <- ggplot(samples, aes(x=cost)) + -->
+<!--     geom_histogram(colour="black", fill="white") + background_grid(major = 'xy') -->
+
+<!-- plot.dens <- ggplot(samples, aes(x=cost)) +  -->
+<!--     geom_density(alpha=.2, fill="#FF6666") +  -->
+<!--     background_grid(major = 'xy') -->
+
+<!-- plot_grid(plot.hist, plot.dens, labels = c('A','B'), ncol = 2) -->
+<!-- ``` -->
+
+<!-- Your preliminary analysis should be described together with the plots. In this example, two facts are immediately clear from the plots: first, **mpg** tends to correlate well with many of the other  variables, most intensely with **drat** (positively) and **wt** (negatively). It is also clear that many of the variables are highly correlated (e.g., **wt** and **disp**). Second, it seems like manual transmission models present larger values of **mpg** than the automatic ones. In the next section a linear model will be fit to the data in order to investigate the significance and magnitude of this possible effect. -->
+
 ## Análise Estatístiica
 
 ### Teste da Média
@@ -155,18 +173,8 @@ cat("\n",
                          t1.mean, " <= ", t1.mean + t1.error, "\n")
 ```
 Como $Z_\alpha < Z_0$, conclui-se que não há evidências suficientes para rejeitar $H_0$ a um nível de confiança de 99%. 
+\textcolor{red}{Falta validar e discutir as assumptions e discutir a potência do teste -> um nível de confiança muito elevado pode levar a uma dificuldade de detectar que a hipótese nula é falsa. <!-- !TODO - Fazer análise da média --> ...}
 
-### Teste da Variância
-Com os dados coletados e armazenados na variável *t1.samples*, é possível verificar se o novo software irá gerar dados com uma variância menor ou maior que aquela resultada no processo original. 
-
-O teste foi executado conforme explicado na seção *Teste da Variância*. 
-
-```{r test2, echo=TRUE, message=FALSE, warning=FALSE}
-library(EnvStats)
-varTest(unlist(t1.samples), alternative = "less", conf.level = 0.95, sigma.squared =100) ## Foi utilizada a função unlist(t1.samples) para garantir que a variável t1.samples estivesse no data type correto.
-```
-
-Como o valor de $P$ calculado é menor do que o valor de $\alpha$, é possível afirmar que a hipótese nula está negada e a variância do novo teste é, portanto, inferior à variância do processo original.  
 
 #### Avaliando suposições do modelo
 A validação das suposições de um experimento é um passo importante de uma análise de experimento. Não apenas permite verificá-las e como também identiicar possíveis efeitos nos resultados encontrados, decorrentes de violações das premissas do planejamento experimental.
@@ -177,7 +185,7 @@ Outro indicador interessante é o _qqplot_ que é um gráfico em que se compara 
 
 ```{r modelSupOne,fig.width=8,echo=TRUE,message=FALSE,fig.cap="Comparação dos quantis da distribuição das amostras com os quantis de uma distribuição normal"}
 library(car)
-car::qqPlot(t1.samples$cost,
+qqPlot(t1.samples$cost,
        pch=16,
        cex=1.5,
        las=1,
@@ -207,9 +215,11 @@ Os gráficos da figura seguinte, o histograma e o gráfico de densidade ajudam a
 
 ## Conclusões e Recomendações
 
-O estudo conduzido nesse trabalho mirou avaliar o desempenho de uma nova versão de um software em comparação a sua versão anterior, cujo custo de execução é bem representado por uma distribuição populacional de média $\mu = 50$ e variância $\sigma^2=100$. Para tal, foram empregados métodos estatísticos provenientes das aulas da disciplina de Planejamento e Análise de Experimentos em ensaios acerca da média e da variância do custo de execução do novo software. No teste da média foi empregado o teste Z, haja vista a premissa que o comportamento da função era normal com variância semelhante ao da função comparada. \textcolor{red}{Adicionar aqui o teste empregado para a variância <!-- !TODO - Adicionar teste da variância --> ...}
+O estudo conduzido nesse trabalho mirou avaliar o desempenho de uma nova versão de um software em comparação a sua versão anterior, cujo custo de execução é bem representado por uma distribuição populacional de média $\mu = 50$ e variância $\sigma^2=100$. Para tal, foram empregados métodos estatísticos proveif (!require(EnvStats, quietly = TRUE, warn.conflicts = FALSE)){
+        install.packages("EnvStats")
+}nientes das aulas da disciplina de Planejamento e Análise de Experimentos em ensaios acerca da média e da variância do custo de execução do novo software. No teste da média foi empregado o teste Z, haja vista a premissa que o comportamento da função era normal com variância semelhante ao da função comparada. \textcolor{red}{Adicionar aqui o teste empregado para a variância <!-- !TODO - Adicionar teste da variância --> ...}
 
-Com relação ao teste da média, ele falhou em refutar a hipótese nula, isto é, ele foi incapaz de afirmar ao nível de significância de 99% que a nova versão do software possui um custo médio de execução mais baixo. Portanto, o teste executado não suporta a hipótese de que a nova versão do software possui um desempenho superior à versão anterior em termos da média do custo de execução. Apesar disso, a partir dos dados colhidos, foi estimado o intervalo de confiança para a média $\mu_1$, com um grau de confiança de 99%: $\mu_1 \in [47.53 , 54.04]$. Quanto a esse intervalo, observa-se que o seu centro é um pouco superior a 50 e que os limites do intervalo batem, aproximadamente, com o efeito de relevância mínima que este teste buscou detectar.       
+Com relação ao teste da média, ele falhou em refutar a hipótese nula, isto é, ele foi incapaz de afirmar ao nível de significância de 99% que a nova versão do software possui um custo médio de execução mais baixo. Portanto, o teste executado não suporta a hipótese de que a nova versão do software possui um desempenho superior à versão anterior em termos da média do custo de execução. Apesar disso, a partir dos dados colhidos, foi estimado o intervalo de confiança para a média $\mu_1$, com um grau de confiança de 99%: $\mu_1 \in [47.53 , 54.04]$. Quanto a esse intervalo, observa-se que o seu centro é um pouco superior a 50 e que os limites do intervalo batem, aproximadamente, com o efeito de relevância mínima que este teste buscou detectar.     
 
 Posteriormente ao teste, em um momento de análise das premissas, verificou-se que a distribuição das amostras não era normal. A violação dessa premissa explica um pouco como o resultado do experimento pode ter sido distorcido, talvez pelo uso de procedimentos não adequados para o caso. Entre esses procedimentos, pode-se citar o teste Z, em que foi considerada a variância populacional da versão anterior, e o procedimento de seleção da amostra/cálculo da média.
 

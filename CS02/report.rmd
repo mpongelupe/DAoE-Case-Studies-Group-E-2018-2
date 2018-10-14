@@ -1,7 +1,7 @@
 ---
-title: 'Estudo de Caso 01: Desempenho de uma nova versão de Software'
+title: 'Estudo de Caso 02: Desempenho de uma nova versão de Software'
 author: "André Boechat(Checker), Mateus Pongelupe(Coordinator), Samuel Leite(Recorder)"
-date: "24 de Setembro de 2018"
+date: "17 de Outubro de 2018"
 header-includes:
   - \usepackage[brazilian]{babel}
 output:
@@ -39,7 +39,9 @@ if (!require(EnvStats, quietly = TRUE, warn.conflicts = FALSE)){
 rm(list = ls())
 ```
 ## Resumo
-Este trabalho consiste no primeiro estudo de caso da disciplina de Planejamento e Análise de Experimentos. Nele, foram executados testes para a avaliar se o desempenho de uma nova versão de software é superior ao da anterior. A média e a variância do custo de execução foram as variáveis escolhidas para fazer essa medida, sendo que a versão atual do software possui um custo de execução dado por uma distribuição conhecida. Os resultados alcançados não suportam a afirmativa que o desempenho da nova versão é superior em termos da média do custo de execução, mas suportam a hipótese de que a variância do custo de execução é menor para a nova versão.
+Este relatório é o segundo dos Estudos de Casos na disciplina disciplina de Planejamento e Análise de Experimentos. O problema inicial consiste em duas populações, sendo elas: uma turma que cursou uma disciplina de Engenharia Elétrica em 2016 e outra que cursou a mesma disciplina em 2017. O teste feito girou em torno do IMC dessas populações, tentando de alguma forma testar o estilo de vida dos alunos com base nesse índice.
+
+INSERIR AQUI COMENTÁRIOS SOBRE O RESULTADO DO EXPERIMENTO
 
 ## Planejamento do Experimento
 Nesse experimento, está sendo avaliado o desempenho de uma nova versão de software. É conhecido que a versão atual do software possui uma distribuição para seu custo de execução com média populacional $\mu=50$ e variância populacional $\sigma^2=100$. Para a nova versão do software deseja-se investigar seus resultados quanto a melhorias de desempenho, isto é, menor custo médio de execução e/ou menor variância. Com esse intuito, foram desenvolvidos dois experimentos: um para avaliar a média e outro para avaliar a variância.

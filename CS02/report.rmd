@@ -38,15 +38,19 @@ if (!require(EnvStats, quietly = TRUE, warn.conflicts = FALSE)){
 }
 rm(list = ls())
 ```
-## Resumo
+## Resumo - finalizar
 Este relatório é o segundo dos Estudos de Casos na disciplina disciplina de Planejamento e Análise de Experimentos. O problema inicial consiste em duas populações, sendo elas: uma turma que cursou uma disciplina de Engenharia Elétrica em 2016 e outra que cursou a mesma disciplina em 2017. O teste feito girou em torno do IMC dessas populações, tentando de alguma forma testar o estilo de vida dos alunos com base nesse índice.
 
 INSERIR AQUI COMENTÁRIOS SOBRE O RESULTADO DO EXPERIMENTO
 
 ## Planejamento do Experimento
-Nesse experimento, está sendo avaliado o desempenho de uma nova versão de software. É conhecido que a versão atual do software possui uma distribuição para seu custo de execução com média populacional $\mu=50$ e variância populacional $\sigma^2=100$. Para a nova versão do software deseja-se investigar seus resultados quanto a melhorias de desempenho, isto é, menor custo médio de execução e/ou menor variância. Com esse intuito, foram desenvolvidos dois experimentos: um para avaliar a média e outro para avaliar a variância.
+Nesse experimento, esá sendo avaliado o IMC de duas populações diferentes. Cada população é um grupo de alunos que cursou uma disciplica de Engenharia Elétrica. Deseja-se comparar os IMC's dessas duas populações. 
 
-### Teste da média
+O Índice de Massa Corporal, ou IMC, é um valor calculado à partir da altura e massa de cada indivíduo, procurando estimar se sua altura e peso estão de acordo com padrões saudáveis. Porém, existem vários estudos mostrando que não é possível relacionar diretamente o IMC de uma pessoa com estar dentro ou fora do peso, uma vez que esse cálculo não levam em considerações fatores como alimentação ou percentual de gordura.
+
+O experimento realizado consiste na comparação das médias dos IMCs de cada uma das populações, separando-as entre seus gêneros, masculino e feminino. Dessa forma, serão realizados dois testes: entre as populações feminino e masculino de cada semestre dos alunos de Engenharia Elétrica. 
+
+### Teste da média - não alterado
 Para avaliar se o desempenho do novo software é melhor que a versão antiga, está sendo observado se a média do custo de execução é menor. Assim, ao definir a hipótese $H_1$, podemos fazer com que ela seja unidirecional, isto é, a região de interesse do teste está na direção em que a média de execução da nova versão seja menor que a média atual. Dessa forma, a hipótese nula $H_0$ e a hipótese $H_1$ podem ser definidas como:
 $$\begin{cases} H_0: \mu >= 50&\\H_1: \mu<50\end{cases}$$
 Para esse teste, definiu-se um nível de significância de $\alpha=0.01$, um efeito de relevância mínimo $\delta^*=4$ e uma potência desejada de $\pi = 1 - \beta = 0.8$. 
@@ -70,21 +74,6 @@ cat("N: ", t1.N)
 Assim, fazendo uso do teste Z, precisaremos de uma amostra de tamanho $N=63$ para executar o nosso teste com uma potência $\pi=0.8$. Por nossa hipótese $H_1$ ser unidirecional, a região crítica do teste Z pode ser determinada como:
 $$P(z_{\alpha} \leq Z_0 \; | \; H_0 \text{ seja verdadeira})$$
 Isto é, para que a hipótese nula seja rejeitada com um nível de confiança de 99% é preciso que $z_\alpha > Z_0$. 
-
-### Teste da variância
-O teste da variância permite com que seja avaliado como está se comportando a nova versão do software em relação à variabilidade dos custos. Definem-se, portanto, duas hipóteses. A primeira, na qual a variância do novo processo é mantida constante e a segunda, na qual há. 
-$$\begin{cases} H_0: \mu = 100&\\H_1: \mu<100\end{cases}$$
-Para esse teste, definiu-se um nível de significância de $\alpha=0.05$.
-
-O teste utilizado para verificar essas hipóteses foi o $\chi^2$.
-
-De acordo com a Teórica, para fazer esse teste é necessário calcular o valor de $\chi^2$ e se comparar de acordo com um valor tabelado. 
-$$\chi^2 = S^2(N-1)/\sigma^2$$
-A Região Crítica, nessa distribuição, para o caso onde está se testando uma amostra de valor menor que a hipótese nula, é:
-$$ P ( \chi^2 < \chi^2_c) = \alpha $$ 
-Rejeita-se a hipótese nula se o valor da estatística pertencer à região crítica.
-
-Dentro do pacote _EnvStats_, há a função *varTest*, que faz o teste da variância de acordo com três métodos: bilateral, menor ou maior (two-sided, less e greater). 
 
 ### Coleta de Dados
 A coleta de dados foi simulada a partir da rotina sugerida no caso de uso, com uma pequena modificação: uma *seed* foi definida para a execução do programa, de forma a garantir sua reprodutibilidade.

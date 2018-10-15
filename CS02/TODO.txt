@@ -1,0 +1,14 @@
+- Carregar os arquivos em variáveis;
+- Para o arquivo de "20162", separar so dados dos alunos que não fazem parte da turma de engenharia elétrica;
+- Para cada variável, realizar o cálculo do IMC (M/h^2);
+- Calcular parâmetros das populações (média e variância);
+- Definir teste de médias a ser realizado, a saber:
+  -Qual o tipo de teste;
+  -Qual as hipóteses nulas e alternativas;
+- Teste de Hipóteses
+- Estimação do tamanho do efeito e do intervalo de confiança na grandeza de interesse;
+- Verificação e discussão das premissas do teste;
+- Derivação de conclusões e recomendações.
+- Discussão sobre a potência do teste (se aplicável).
+- Discussão sobre possíveis formas de melhorar este
+experimento.

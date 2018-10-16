@@ -1,7 +1,7 @@
-- Carregar os arquivos em variáveis;
-- Para o arquivo de "20162", separar so dados dos alunos que não fazem parte da turma de engenharia elétrica;
-- Para cada variável, realizar o cálculo do IMC (M/h^2);
-- Separar cada população em duas: masculino e feminino, obtendo-se assim 4 populações, as quais serão comparadas duas a duas. 
+- Carregar os arquivos em variáveis; DONE
+- Para o arquivo de "20162", separar so dados dos alunos que não fazem parte da turma de engenharia elétrica; DONE
+- Para cada variável, realizar o cálculo do IMC (M/h^2); DONE
+- Separar cada população em duas: masculino e feminino, obtendo-se assim 4 populações, as quais serão comparadas duas a duas. DONE 
 - Calcular parâmetros das populações (média e variância);
 - Definir teste de médias a ser realizado, a saber:
   -Qual o tipo de teste;

@@ -12,31 +12,32 @@ output:
 ```{r setup,results='hide',warning=FALSE,echo=FALSE}
 # A few initial definitions just to make sure all required packages are installed. Change as needed.
 # NOTE: It may echo some weird messages to the PDF on the first compile (package installation messages). Run twice and the problem will (hopefully) go away.
-if (!require(ggplot2, quietly = TRUE)){
-      install.packages("ggplot2")
-      }
-if (!require(devtools, quietly = TRUE)){
-      install.packages("devtools")
-      }
- if (!require(broom, quietly = TRUE)){
-       devtools::install_github("dgrtwo/broom")
-      }
-if (!require(ExpDE, quietly = TRUE)){
-        install.packages("ExpDE")
-      }
-if (!require(cowplot, quietly = TRUE, warn.conflicts = FALSE)){
-        install.packages("cowplot")
-}
-if (!require(asbio, quietly = TRUE, warn.conflicts = FALSE)){
-        install.packages("asbio")
-}
-if (!require(car, quietly = TRUE, warn.conflicts = FALSE)){
-        install.packages("car")
-}
-if (!require(EnvStats, quietly = TRUE, warn.conflicts = FALSE)){
-        install.packages("EnvStats")
-}
-rm(list = ls())
+
+##if (!require(ggplot2, quietly = TRUE)){
+##    install.packages("ggplot2")
+##  }
+##if (!require(devtools, quietly = TRUE)){
+##      install.packages("devtools")
+##      }
+## if (!require(broom, quietly = TRUE)){
+##       devtools::install_github("dgrtwo/broom")
+##      }
+##if (!require(ExpDE, quietly = TRUE)){
+##        install.packages("ExpDE")
+##      }
+##if (!require(cowplot, quietly = TRUE, warn.conflicts = FALSE)){
+##        install.packages("cowplot")
+##}
+##if (!require(asbio, quietly = TRUE, warn.conflicts = FALSE)){
+##        install.packages("asbio")
+##}
+##if (!require(car, quietly = TRUE, warn.conflicts = FALSE)){
+##        install.packages("car")
+##}
+##if (!require(EnvStats, quietly = TRUE, warn.conflicts = FALSE)){
+##        install.packages("EnvStats")
+##}
+##rm(list = ls())
 ```
 ## Resumo - finalizar
 Este relatório é o segundo dos Estudos de Casos na disciplina disciplina de Planejamento e Análise de Experimentos. O problema inicial consiste em duas populações, sendo elas: uma turma que cursou uma disciplina de Engenharia Elétrica em 2016 e outra que cursou a mesma disciplina em 2017. O teste feito girou em torno do IMC dessas populações, tentando de alguma forma testar o estilo de vida dos alunos com base nesse índice.
@@ -50,10 +51,14 @@ O Índice de Massa Corporal, ou IMC, é um valor calculado à partir da altura e ma
 
 O experimento realizado consiste na comparação das médias dos IMCs de cada uma das populações, separando-as entre seus gêneros, masculino e feminino. Dessa forma, serão realizados dois testes: entre as populações feminino e masculino de cada semestre dos alunos de Engenharia Elétrica. 
 
-### Teste da média - não alterado
-Para avaliar se o desempenho do novo software é melhor que a versão antiga, está sendo observado se a média do custo de execução é menor. Assim, ao definir a hipótese $H_1$, podemos fazer com que ela seja unidirecional, isto é, a região de interesse do teste está na direção em que a média de execução da nova versão seja menor que a média atual. Dessa forma, a hipótese nula $H_0$ e a hipótese $H_1$ podem ser definidas como:
-$$\begin{cases} H_0: \mu >= 50&\\H_1: \mu<50\end{cases}$$
-Para esse teste, definiu-se um nível de significância de $\alpha=0.01$, um efeito de relevância mínimo $\delta^*=4$ e uma potência desejada de $\pi = 1 - \beta = 0.8$. 
+### Teste da média - em andamento
+Para avaliar se o IMC das populações é o mesmo, serão realizados testes de hipótese para a população feminina e outro para a população masculina. Para ambos os casos, serão realizados dois testes. O primeiro teste verificará se a média das populações é igual, tendo como hipótese nula conforme abaixo. A hipótese alternativa será unilateral, onde a diferença das médias é menor que zero, ou seja, a população 2 tem média maior que a população 1. 
+$$\begin{cases} H_0: \mu_1-\mu_2 = 0&\\H_1: \mu_1-\mu_2<0\end{cases}$$
+
+O segundo teste de hipóteses somente será necessário caso a hipótese alternativa também falhe, para verificar se a população 1 tem IMC maior que a população 2. Para esses teste, as hipóteses serão: 
+$$\begin{cases} H_0: \mu_1-\mu_2 = 0&\\H_1: \mu_1-\mu_2>0\end{cases}$$
+
+Para esse teste, definiu-se um nível de significância de $\alpha=0.01$, um efeito de relevância mínimo $\delta^*=$ e uma potência desejada de $\pi = 1 - \beta = 0.8$. Os valores de média e variância de cada população serão obtidos através dos  dados coletados. 
 ```{r definitions}
 h0.mean = 50
 h0.sd = sqrt(100)
@@ -63,6 +68,8 @@ t1.delta = 4
 t1.beta = 0.2
 t1.power = 1 - t1.beta
 ```
+
+CONTINUAR À PARTIR DAQUI
 Assumindo que a hipótese nula $H_0$ se comporte com uma distribuição de média populacional $\mu=50$ e variância populacional $\sigma^2 = 100$, pode-se calcular o número de amostras mínimo a partir do teste Z, haja vista que a variância da hipótese nula é conhecida. Para fazer esse cálculo, foi usado o pacote *asbio*:
 ```{r nCalculus, warning=FALSE}
 library(asbio)
@@ -75,29 +82,47 @@ Assim, fazendo uso do teste Z, precisaremos de uma amostra de tamanho $N=63$ par
 $$P(z_{\alpha} \leq Z_0 \; | \; H_0 \text{ seja verdadeira})$$
 Isto é, para que a hipótese nula seja rejeitada com um nível de confiança de 99% é preciso que $z_\alpha > Z_0$. 
 
-### Coleta de Dados
-A coleta de dados foi simulada a partir da rotina sugerida no caso de uso, com uma pequena modificação: uma *seed* foi definida para a execução do programa, de forma a garantir sua reprodutibilidade.
+### Coleta de Dados e Tratamento de Dados - em andamento
+Os dados foram coletados à partir de dois arquivos enviados. Nesses arquivos, estão contidos os valores para a altura e a massa de cada aluno. Os arquivos devem ser lidos em uma variável e então separados de acordo com o seu gênero e descartados de acordo com sua turma, caso aplicável. Esse último caso se refere à parcela de alunos na turma 2016/2 que não fazem parte do curso de Engenharia Elétrica. 
 ```{r dataCollection, results='hide'}
-# Loading required package
-library(ExpDE)
-mre <- list(name = "recombination_bin", cr = 0.9) 
-mmu <- list(name = "mutation_rand", f = 2)
-mpo <- 100
-mse <- list(name  = "selection_standard")
-mst <- list(names = "stop_maxeval", maxevals = 10000)
-mpr <- list(name  = "sphere", xmin  = -seq(1, 20), xmax  = 20 + 5 * seq(5, 24))
+dados_20162 <- read.csv(file="20162.csv",head=TRUE,sep=",")
+dados_20171 <- read.csv(file="20171.csv",head=TRUE,sep=",")
 
-# Setting seed so the program can be reproduced.
-set.seed(1998)
+x <- 1
+while ( x <= length(dados_20162))
+{
+  if (dados_20162$Course=="PPGEE")
+  {
+    if(dados_20162$Gender[x]=="M") {
+    m_162$H[x] = dados_20162$Height[x]
+    m_162$W[x] = dados_20162$Weight[x]
+      
+    } else {
+    f_162$H[x] = dados_20162$Height[x]
+    f_162$W[x] = dados_20162$Weight[x]
+    }
+  }
+  x=x+1
+}
 
-# One sample
-ExpDE(mpo, mmu, mre, mse, mst, mpr,
-               showpars = list(show.iters = "none"))$Fbest
+y <- 1
+while ( y <= length(dados_20162))
+{
+  if(dados_20162$Gender[y]=="M") {
+    m_171$H[y] = dados_20171$Height[y]
+    m_171$W[y] = dados_20171$Weight[y]
+      
+  } else {
+    f_171$H[y] = dados_20171$Height[y]
+    f_171$W[y] = dados_20171$Weight[y]
+    }
+  
+  y=y+1
+}
+
+
 ```
-Em nossos experimentos, precisaremos coletar um número arbitrário **N** de amostras. Portanto, a partir das rotinas acima, foram criadas duas funções para essa coleta:
 
-- *generate\_sample* : Coleta uma única amostra.
-- *generate\_n\_samples* : Coleta **n** amostras no formato de um *data.frame*.
 
 Segue abaixo a codificação dessas funções, bem como um exemplo da chamada de *generate\_n\_samples* para $N=10$:
 ```{r dataCollectionNewRoutines, results='hide'}  

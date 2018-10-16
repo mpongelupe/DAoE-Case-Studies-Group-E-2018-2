@@ -1,4 +1,4 @@
-Weight(kg),Height (m),Gender,Age (years)
+Weight,Height,Gender,Age
 89,1.73,M,23
 72.5,1.64,M,28
 84,1.7,M,34

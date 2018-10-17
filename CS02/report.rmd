@@ -95,36 +95,40 @@ cat("\n",
 "2017-FEM: ", turma2.f.var ,"\n"
 )
 
+turma1.f$year = '2016'
+turma2.f$year = '2017'
+t1.f <- rbind(turma1.f, turma2.f)
+
+turma1.m$year = '2016'
+turma2.m$year = '2017'
+t1.m <- rbind(turma1.m, turma2.m)
+
 ```
 
 ### Teste da média - em andamento
 Para avaliar se o IMC das populações é o mesmo, serão realizados testes de hipótese para a população feminina e outro para a população masculina. Para ambos os casos, será realizado um teste em que a hipótese nula consiste na igualdade das médias das populações. A hipótese alternativa será bilateral, isto é, estamos interessados em detectar quaisquer diferenças entre as médias das populações. 
 $$\begin{cases} H_0: \mu_1-\mu_2 = 0&\\H_1: \mu_1-\mu_2 \not\equiv 0\end{cases}$$
 
-Para esse teste, definiu-se um n?vel de significância de $\alpha=0.01$, um efeito de relevância mínimo $\delta^*=$ e uma potência desejada de $\pi = 1 - \beta = 0.8$. Os valores de média e variância de cada população serão obtidos através dos dados coletados. 
+Para esse teste, definiu-se um nível de significância de $\alpha=0.05$, um efeito de relevância mínimo $\delta^*=4$. Tendo em vista que os valores já foram coletados para ambos os testes, definiu-se $N_{m1} = N_{m2} = 21$ e $N_{f1} = 7; N_{f2} =  4$. Com isso, pode-se calcular a potência do teste para detecção do efeito de relevância mínimo:
 ```{r definitions}
-h0.mean = 50
-h0.sd = sqrt(100)
-
-t1.alpha = 0.01
+t1.alpha = 0.05
 t1.delta = 4
-t1.beta = 0.2
-t1.power = 1 - t1.beta
+nm <- 21
+## desvio padrão da turma 1 é maior que da turma 2
+sd <- sd(turma1.m$IMC) 
+
+power.t.test(n = nm, sd = sd(turma1.m$IMC), sig.level = t1.alpha, delta = t1.delta,
+             type = "two.sample",
+             alternative = "two.sided")
+
+#t.test(t1.m$IMC ~ t1.m$year, alternative = 'two.sided', mu = 0, conf.level = 0.99)
 ```
 
-CONTINUAR ? PARTIR DAQUI
-Assumindo que a hip?tese nula $H_0$ se comporte com uma distribui??o de m?dia populacional $\mu=50$ e vari?ncia populacional $\sigma^2 = 100$, pode-se calcular o n?mero de amostras m?nimo a partir do teste Z, haja vista que a vari?ncia da hip?tese nula ? conhecida. Para fazer esse c?lculo, foi usado o pacote *asbio*:
-```{r nCalculus, warning=FALSE}
-library(asbio)
-n <- power.z.test(power = t1.power, alpha = t1.alpha, effect = t1.delta, 
-                  sigma = h0.sd, test = "one.tail")$n
-t1.N <- ceiling(n)
-cat("N: ", t1.N)
-```
-Assim, fazendo uso do teste Z, precisaremos de uma amostra de tamanho $N=63$ para executar o nosso teste com uma pot?ncia $\pi=0.8$. Por nossa hip?tese $H_1$ ser unidirecional, a regi?o cr?tica do teste Z pode ser determinada como:
-$$P(z_{\alpha} \leq Z_0 \; | \; H_0 \text{ seja verdadeira})$$
-Isto ?, para que a hip?tese nula seja rejeitada com um n?vel de confian?a de 99% ? preciso que $z_\alpha > Z_0$. 
+Os valores de média e variância de cada população serão obtidos através dos dados coletados. 
 
+Assim, fazendo uso do teste de Welch, usando uma amostra de tamanho $N=21$, teremos uma potência de aproximadamente 83% para detectar o efeito de relevância mínimo desejado. Por nossa hipótese $H_1$ ser bidirecional, a região crítica do teste T pode ser determinada como:
+$$P(-t_{\alpha/2, n_1+n_2-2}  \leq t_{0} \leq t_{\alpha/2, n_1+n_2-2} \; | \; H_0 \text{ seja verdadeira})$$
+Isto é, para que a hipótese nula seja rejeitada com um nível de confiança de 95%, é preciso que $-t_{\alpha/2, n_1+n_2-2}  \leq t_{0} \leq t_{\alpha/2, n_1+n_2-2}$. 
 
 ## Análise de Dados exploratória
 Antes de proceder com o teste de hipóteses, é interessante fazer uma análise exploratória dos dados. Dessa forma, foram gerados os gráficos Q-Q para as populações masculinas e femininas das turmas de 2016 e 2017. 

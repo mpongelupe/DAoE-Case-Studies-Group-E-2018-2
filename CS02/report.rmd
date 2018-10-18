@@ -1,6 +1,6 @@
 ---
-title: 'Estudo de Caso 02: Desempenho de uma nova versão de Software'
-author: "André Boechat(Checker), Mateus Pongelupe(Coordinator), Samuel Leite(Recorder)"
+title: 'Estudo de Caso 02: Comparação do IMC Médio de alunos do PPGEE-UFMG ao longo de dois semestres'
+author: "Mateus Pongelupe(Coordinator), Samuel Leite(Recorder)"
 date: "17 de Outubro de 2018"
 header-includes:
   - \usepackage[brazilian]{babel}
@@ -31,12 +31,11 @@ if (!require(pwr, quietly = TRUE)){
 rm(list = ls())
 ```
 ## Resumo - finalizar
-Este relatório é o segundo dos Estudos de Casos na disciplina disciplina de Planejamento e Análise de Experimentos. O problema inicial consiste em duas populações, sendo elas: uma turma que cursou uma disciplina de Engenharia Elétrica em 2016 e outra que cursou a mesma disciplina em 2017. O teste feito girou em torno do IMC dessas populações, tentando de alguma forma testar o estilo de vida dos alunos com base nesse índice.
+Este relatório é o segundo dos Estudos de Casos na disciplina disciplina de Planejamento e Análise de Experimentos. O problema inicial consiste em duas populações, sendo elas: uma turma que cursou uma disciplina de Engenharia Elétrica em 2016 e outra que cursou a mesma disciplina em 2017. O teste feito girou em torno do IMC dessas populações, tentando de alguma forma testar o estilo de vida dos alunos com base nesse índice. Os resultados alcançados não suportam a afirmativa que os alunos das turmas possuem um estilo de vida diferente, detectável pelo IMC.
 
-\textcolor{red}{INSERIR AQUI COMENTÁRIOS SOBRE O RESULTADO DO EXPERIMENTO}
 
 ## Planejamento do Experimento
-Nesse experimento, está sendo avaliado o IMC de duas populações diferentes. Cada população é um grupo de alunos que cursou uma disciplica de Engenharia Elétrica. Deseja-se comparar os IMC's dessas duas populações. 
+Nesse experimento, está sendo avaliado o IMC de duas populações diferentes. Cada população é um grupo de alunos que cursou uma disciplina de Engenharia Elétrica. Deseja-se comparar os IMC's dessas duas populações. 
 
 O Índice de Massa Corporal, ou IMC, é um valor calculado à partir da altura e massa de cada indivíduo, procurando estimar se sua altura e peso estão de acordo com padrões saudáveis. Porém, existem vários estudos mostrando que não é possível relacionar diretamente o IMC de uma pessoa com estar dentro ou fora do peso, uma vez que esse cálculo não levam em considerações fatores como alimentação ou percentual de gordura. O cálculo de IMC é dado pela equação:
 $$IMC = \frac{w}{{h}^2}$$
@@ -108,7 +107,7 @@ t1.m <- rbind(turma1.m, turma2.m)
 
 ```
 
-### Teste da média
+### Teste da média - População Masculina
 Para avaliar se o IMC das populações é o mesmo, serão realizados testes de hipótese para a população feminina e outro para a população masculina. Para ambos os casos, será realizado um teste em que a hipótese nula consiste na igualdade das médias das populações. A hipótese alternativa será bilateral, isto é, estamos interessados em detectar quaisquer diferenças entre as médias das populações. 
 $$\begin{cases} H_0: \mu_1-\mu_2 = 0&\\H_1: \mu_1-\mu_2 \not\equiv 0\end{cases}$$
 
@@ -138,6 +137,11 @@ Os valores de média e variância de cada população serão obtidos através do
 Assim, fazendo uso do teste de Welch, usando uma amostra de tamanho $N=21$, teremos uma potência de aproximadamente 80,9% para detectar o efeito de relevância mínimo desejado. Por nossa hipótese $H_1$ ser bidirecional, a região crítica do teste T pode ser determinada como:
 $$P(-t_{\alpha/2, n_1+n_2-2}  \leq t_{0} \leq t_{\alpha/2, n_1+n_2-2} \; | \; H_0 \text{ seja verdadeira})$$
 Isto é, para que a hipótese nula seja rejeitada com um nível de confiança de 95%, é preciso que $-t_{\alpha/2, n_1+n_2-2}  \leq t_{0} \leq t_{\alpha/2, n_1+n_2-2}$. 
+
+### Teste da Mann-Whitney - População Feminina
+Para as populações femininas, foi usado o teste U de Mann-Whitney-Wilcoxon. Trata-se de um teste que se aplica para populações independentes e fornece informações se a distribuição das populações são similares sem assumir que elas sejam normais.
+
+Esse teste deve ser abordado futuramente nas próximas aulas da disciplina e não buscou-se fazer um estudo profundo acerca do mesmo.
 
 ## Análise de Dados exploratória
 Antes de proceder com o teste de hipóteses, é interessante fazer uma análise exploratória dos dados. Dessa forma, foram gerados os gráficos Q-Q para as populações masculinas e femininas das turmas de 2016 e 2017. 
@@ -216,6 +220,15 @@ t.test(t1.m$IMC ~ t1.m$year, alternative = 'two.sided', mu = 0, conf.level = 1-t
 
 Com base nesses dados, não é possível rejeitar a hipótese nula ao nível de confiança de 95%, com base no elevado valor-p obtido. Acerca da potência do teste, foi utilizado o valor da variância das duas populações, haja visto que eram conhecidas e o teste indicaria uma potência de aproximadamente 80,9% para o tamanho de efeito que se desejava detectar. 
 
+### Teste da Mann-Whitney - População Feminina
+
+No teste U, assume-se a hipótese nula de que as distribuições são equivalentes e a alternativa é de que diferem por algum deslocamento. Esse teste calcula um valor
+
+```{r testTwo}
+wilcox.test(IMC ~ year, data=t1.f, alternative = 'two.sided', conf.level = 0.95, conf.int = T)
+```
+
+Como o valor $p=0.073$ obtido é maior que o valor de $\alpha=0.05$, não é possível rejeitar a hipótese nula ao nível de significância de 95%.
 
 ### Avaliando suposições do modelo
 Conforme já validado anteriormente na seção de **Análise Exploratória dos Dados**, as populações masculinas possuem distribuição aproximadamente normal, com uma pequena cauda superior. Contudo, esse pequeno desvio de normalidade ainda não é capaz de causar uma distorção muito grande no teste T executado.
@@ -224,19 +237,20 @@ Quanto às populações femininas, as mesmas possuíam poucas amostras e um comp
 
 ## Conclusões e Recomendações
 
-O estudo conduzido nesse trabalho mirou avaliar o desempenho de uma nova vers?o de um software em compara??o a sua vers?o anterior, cujo custo de execu??o ? bem representado por uma distribui??o populacional de m?dia $\mu = 50$ e vari?ncia $\sigma^2=100$. Para tal, foram empregados m?todos estat?sticos provenientes das aulas da disciplina de Planejamento e An?lise de Experimentos em ensaios acerca da m?dia e da vari?ncia do custo de execu??o do novo software. No teste da m?dia foi empregado o teste Z, haja vista a premissa que o comportamento da fun??o era normal com vari?ncia semelhante ao da fun??o comparada. Foi empregado o Teste de Hip?teses com base em uma distribui??o $\chi^2$ para analisar a altera??o da vari?ncia no novo software.
+O estudo conduzido nesse trabalho mirou avaliar o IMC de duas turmas de Pós-Graduação em Engenharia Elétrica, de forma a inferir à cerca do estilo de vida dos alunos. Para tal, foram empregados métodos estatísticos provenientes das aulas da disciplina de Planejamento e Análise de Experimentos em ensaios acerca da média e da distribuição do IMC dessas turmas. As turmas foram separadas em duas sub-populações, conforme o sexo. Como a sub-população masculina possuía mais observações e as distribuição para cada turma eram mais próximas de uma normal, optou-se por fazer um teste T de média de duas populações, por meio do teste de Welch.
 
-Com rela??o ao teste da m?dia, ele falhou em refutar a hip?tese nula, isto ?, ele foi incapaz de afirmar ao n?vel de signific?ncia de 99% que a nova vers?o do software possui um custo m?dio de execu??o mais baixo. Portanto, o teste executado n?o suporta a hip?tese de que a nova vers?o do software possui um desempenho superior ? vers?o anterior em termos da m?dia do custo de execu??o. Apesar disso, a partir dos dados colhidos, foi estimado o intervalo de confian?a para a m?dia $\mu_1$, com um grau de confian?a de 99%: $\mu_1 \in [47.53 , 54.04]$. Quanto a esse intervalo, observa-se que o seu centro ? um pouco superior a 50 e que os limites do intervalo batem, aproximadamente, com o efeito de relev?ncia m?nima que este teste buscou detectar.       
+Esse teste falhou em refutar a hipótese nula, isto é, ele foi incapaz de afirmar ao nível de significância de 95% que havia uma diferença entre as médias dos IMCs. Portanto, o teste executado não suporta a hipótese de que as turmas possuem estilos de vida diferentes. Apesar disso, a partir dos dados colhidos, foi estimado o tamanho de efeito e o intervalo de confiança para a diferença das médias:
+$d = 0.6504$ e o intervalo de confiança de 95% para o mesmo é $[-1.7888, 3.0897]$, tendendo um pouco para a média para o ano de 2016 ser maior que a de 2017.
 
-Posteriormente ao teste, em um momento de an?lise das premissas, verificou-se que a distribui??o das amostras n?o era normal. A viola??o dessa premissa explica um pouco como o resultado do experimento pode ter sido distorcido, talvez pelo uso de procedimentos n?o adequados para o caso. Entre esses procedimentos, pode-se citar o teste Z, em que foi considerada a vari?ncia populacional da vers?o anterior, e o procedimento de sele??o da amostra/c?lculo da m?dia.
 
-Tendo ci?ncia disso, uma alternativa seria a execu??o do teste T, que considera a vari?ncia da amostra retirada. Outra alternativa seria um tratamento/descarte de amostras esp?rias ou que est?o nas "pontas" da distribui??o das amostras, de forma a atenuar o efeito que essas observa??es t?m na distribui??o das amostras.
+Previamente ao teste, em um momento de análise exploratória dos dados, verificou-se que a premissa da normalidade era razoavelmente respeitada pela sub-população masculina, dando insumos para execução do teste T. A mesma análise foi feita sobre a sub-população feminina que não respeitava a essa premissa, exigindo um teste que não tem como requisito a normalidade das populações.
 
-O Teste de Vari?ncia foi realizado seguindo-se a premissa de que a distribui??o segue uma tend?ncia $\chi^2$. Apesar de o teste afirmar que a vari?ncia da amostra pode ser considerada como inferior ? vari?ncia original $\sigma^2=100$, a premissa de que a distribui??o amostral pode ser considerada como normal foi refutada. Portanto, a modelagem dessa distribui??o em um padr?o qui-quadr?tico fica tamb?m contestada. Ainda, os intervalos de confian?a calculados est?o bem distante do valor da vari?ncia da amostra e esse valor ? bem inferior ao valor original.
+Com base nisso, após uma pesquisa na Bibliografia, optou-se por executar o teste U de Mann-Whitney, que compara distribuições de duas populações. Em relação a esse teste, alguns detalhes acerca de cálculo de potência foram despriorizados, haja vista que ainda serão abordados na disciplina. Por fim, o resultado dessa estatística não foi capaz de rejeitar a hipótese nula, de que as distribuições são similares, ao nível de significância de 95%.
 
+Avaliando esses resultados, no que tange ao estilo de vida dos alunos das turmas, não é possível afirmar que haja uma diferença detectável por meio do IMC, ao nível de confiança de 95%.
 
 ## Referências
 - R Man Pages - pwr package - https://www.rdocumentation.org/packages/pwr/versions/1.2-2/topics/pwr.t.test
 - R Man Pages - car package - https://rdrr.io/cran/car/man/qqPlot.html
-- Montgomery, Douglas C. - Applied statistics and probabiliy for engineers (5ª Edição) - Capítulos 10
+- Montgomery, Douglas C. - Applied statistics and probabiliy for engineers (5ª Edição) - Capítulos 10, 15
 - Notas de Aula - https://github.com/fcampelo/Design-and-Analysis-of-Experiments

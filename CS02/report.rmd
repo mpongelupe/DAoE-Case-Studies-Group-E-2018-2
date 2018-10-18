@@ -1,6 +1,6 @@
 ---
 title: 'Estudo de Caso 02: Comparação do IMC Médio de alunos do PPGEE-UFMG ao longo de dois semestres'
-author: "Mateus Pongelupe(Coordinator), Samuel Leite(Recorder)"
+author: "André Boechat(Checker), Augusto(Checker), Mateus Pongelupe(Coordinator), Samuel Leite(Recorder)"
 date: "17 de Outubro de 2018"
 header-includes:
   - \usepackage[brazilian]{babel}

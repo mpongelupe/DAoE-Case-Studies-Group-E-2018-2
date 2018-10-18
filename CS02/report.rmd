@@ -25,6 +25,9 @@ if (!require(broom, quietly = TRUE)){
 if (!require(car, quietly = TRUE)){
       install.packages("car")
 }
+if (!require(pwr, quietly = TRUE)){
+      install.packages("pwr")
+}
 rm(list = ls())
 ```
 ## Resumo - finalizar
@@ -41,7 +44,7 @@ em que $w$ equivale ao peso do indivíduo em **kg** e $h$ à sua altura em **m**
 
 O experimento realizado consiste na comparação das médias dos IMCs de cada uma das populações, separando-as entre seus gêneros, masculino e feminino. Dessa forma, serão realizados dois testes: entre as populações feminino e masculino de cada semestre dos alunos de Engenharia Elétrica. 
 
-### Coleta de Dados e Tratamento de Dados - em andamento
+### Coleta de Dados e Tratamento de Dados
 Os dados foram coletados à partir de dois arquivos enviados. Nesses arquivos, estão contidos os valores para a altura e a massa de cada aluno. Os arquivos devem ser lidos em uma variável e então separados de acordo com o seu gênero e descartados de acordo com sua turma, caso aplicável. Esse último caso se refere à parcela de alunos na turma 2016/2 que não fazem parte do curso de Engenharia Elétrica. 
 ```{r dataCollection}
 input_file1 <- '20162.csv'
@@ -105,28 +108,34 @@ t1.m <- rbind(turma1.m, turma2.m)
 
 ```
 
-### Teste da média - em andamento
+### Teste da média
 Para avaliar se o IMC das populações é o mesmo, serão realizados testes de hipótese para a população feminina e outro para a população masculina. Para ambos os casos, será realizado um teste em que a hipótese nula consiste na igualdade das médias das populações. A hipótese alternativa será bilateral, isto é, estamos interessados em detectar quaisquer diferenças entre as médias das populações. 
 $$\begin{cases} H_0: \mu_1-\mu_2 = 0&\\H_1: \mu_1-\mu_2 \not\equiv 0\end{cases}$$
 
-Para esse teste, definiu-se um nível de significância de $\alpha=0.05$, um efeito de relevância mínimo $\delta^*=4$. Tendo em vista que os valores já foram coletados para ambos os testes, definiu-se $N_{m1} = N_{m2} = 21$ e $N_{f1} = 7; N_{f2} =  4$. Com isso, pode-se calcular a potência do teste para detecção do efeito de relevância mínimo:
+Para esse teste, definiu-se um nível de significância de $\alpha=0.05$, um efeito de relevância mínimo $\delta^*=3,5$. Tendo em vista que os valores já foram coletados para ambos os testes, definiu-se $N_{m1} = N_{m2} = 21$ e $N_{f1} = 7; N_{f2} =  4$. Com isso, pode-se calcular a potência do teste para detecção do efeito de relevância mínimo:
 ```{r definitions}
 t1.alpha = 0.05
-t1.delta = 4
+
+# Diferença de 3 pontos no valor do IMC
+t1.delta = 3.5
+
+
 nm <- 21
 ## desvio padrão da turma 1 é maior que da turma 2
-sd <- sd(turma1.m$IMC) 
+sd1.m <- sd(turma1.m$IMC) 
+sd2.m <- sd(turma2.m$IMC)
 
-power.t.test(n = nm, sd = sd(turma1.m$IMC), sig.level = t1.alpha, delta = t1.delta,
-             type = "two.sample",
-             alternative = "two.sided")
+t1.s <- sqrt( ( (nm-1)*(sd1.m^2)  + (nm-1)*(sd2.m^2) ) / ( nm + nm - 2 ) )
 
-#t.test(t1.m$IMC ~ t1.m$year, alternative = 'two.sided', mu = 0, conf.level = 0.99)
+pwr::pwr.t.test(n = nm, d = t1.delta/t1.s, sig.level = t1.alpha, 
+     type = 'two.sample',
+     alternative = "two.sided")
+
 ```
 
 Os valores de média e variância de cada população serão obtidos através dos dados coletados. 
 
-Assim, fazendo uso do teste de Welch, usando uma amostra de tamanho $N=21$, teremos uma potência de aproximadamente 83% para detectar o efeito de relevância mínimo desejado. Por nossa hipótese $H_1$ ser bidirecional, a região crítica do teste T pode ser determinada como:
+Assim, fazendo uso do teste de Welch, usando uma amostra de tamanho $N=21$, teremos uma potência de aproximadamente 80,9% para detectar o efeito de relevância mínimo desejado. Por nossa hipótese $H_1$ ser bidirecional, a região crítica do teste T pode ser determinada como:
 $$P(-t_{\alpha/2, n_1+n_2-2}  \leq t_{0} \leq t_{\alpha/2, n_1+n_2-2} \; | \; H_0 \text{ seja verdadeira})$$
 Isto é, para que a hipótese nula seja rejeitada com um nível de confiança de 95%, é preciso que $-t_{\alpha/2, n_1+n_2-2}  \leq t_{0} \leq t_{\alpha/2, n_1+n_2-2}$. 
 
@@ -196,108 +205,24 @@ plot_grid(plot.hist1, plot.hist2, plot.hist3, plot.hist4, labels = c('A','B', 'C
 
 ```
 
+## Análise Estatística
 
+### Teste da Média população masculina
 
-Segue abaixo a codifica??o dessas fun??es, bem como um exemplo da chamada de *generate\_n\_samples* para $N=10$:
-```{r dataCollectionNewRoutines, eval=FALSE, include=FALSE, results='hide'}
-#Generates one sample
-generate_sample <- function() {
-  return(ExpDE(mpo, mmu, mre, mse, mst, mpr,
-               showpars = list(show.iters = "none"))$Fbest);
-}
-
-#Generates n samples on the data.frame format
-generate_n_samples <- function(n) {
-  cost <- replicate(n, generate_sample())
-  return(data.frame(cost))
-}
-
-#Example for N=10
-generate_n_samples(10)
+Dados os parâmetros definidos na seção *Planejamento do Experimento* para o teste da média, foram usadas as 21 amostras do sexo masculino de cada ano e o teste foi executado nas linhas abaixo. O intervalo de confiança também foi calculado, assim como a estimação do tamanho de efeito. O teste executado seguiu o teste de Welch, que calcula uma estatística para a distribuição t que modela o problema, considerando variâncias diferentes e desconhecidas. 
+```{r testOne}
+t.test(t1.m$IMC ~ t1.m$year, alternative = 'two.sided', mu = 0, conf.level = 1-t1.alpha)
 ```
 
-## An?lise Estat?stica
-
-### Teste da M?dia
-
-Dados os par?metros definidos na se??o *Planejamento do Experimento* para o teste da m?dia, foram recolhidas $N=63$ amostras e o teste foi executado nas linhas abaixo. O intervalo de confian?a tamb?m foi calculado, considerando uma distribui??o normal cuja vari?ncia populacional $\sigma^2=100$ ? conhecida.
-```{r testOne, eval=FALSE, include=FALSE}
-## Getting the samples
-t1.samples <- generate_n_samples(t1.N)
-## Writing samples to csv file
-write.csv(t1.samples, 'test-one.csv')
-
-## Test Z Execution
-t1.mean <- mean(t1.samples$cost)
-t1.sd <- sd(t1.samples$cost)
-z0 <- (t1.mean - h0.mean)/(h0.sd/sqrt(t1.N))
-t1.z_alpha <- qnorm(t1.alpha)
-
-## Confidence interval
-t1.error <- qnorm(1-(t1.alpha/2)) * h0.sd / sqrt(n)
+Com base nesses dados, não é possível rejeitar a hipótese nula ao nível de confiança de 95%, com base no elevado valor-p obtido. Acerca da potência do teste, foi utilizado o valor da variância das duas populações, haja visto que eram conhecidas e o teste indicaria uma potência de aproximadamente 80,9% para o tamanho de efeito que se desejava detectar. 
 
 
-cat("\n",
-"Mean: ", t1.mean, "\n",
-"Z0: ", z0 ,"\n",
-"Zalpha: ",  t1.z_alpha ,"\n",
-"Confidence Interval: ", t1.mean - t1.error, " <= ", 
-                         t1.mean, " <= ", t1.mean + t1.error, "\n")
-```
-Como $Z_\alpha < Z_0$, conclui-se que n?o h? evid?ncias suficientes para rejeitar $H_0$ a um n?vel de confian?a de 99%. 
+### Avaliando suposições do modelo
+Conforme já validado anteriormente na seção de **Análise Exploratória dos Dados**, as populações masculinas possuem distribuição aproximadamente normal, com uma pequena cauda superior. Contudo, esse pequeno desvio de normalidade ainda não é capaz de causar uma distorção muito grande no teste T executado.
 
-### Teste da Vari?ncia
-Com os dados coletados e armazenados na vari?vel *t1.samples*, ? poss?vel verificar se o novo software ir? gerar dados com uma vari?ncia menor ou maior que aquela resultada no processo original. 
+Quanto às populações femininas, as mesmas possuíam poucas amostras e um comportamento mais distante do esperado para uma normal. Isso foi levado em conta para a escolha do seu teste.
 
-O teste foi executado conforme explicado na se??o *Teste da Vari?ncia*. 
-
-```{r test2, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
-library(EnvStats)
-varTest(unlist(t1.samples), alternative = "less", conf.level = 0.95, sigma.squared =100)
-## Foi utilizada a fun??o unlist(t1.samples) para garantir que a vari?vel t1.samples 
-## estivesse no data type correto.
-```
-
-Como o valor de $P$ calculado ? menor do que o valor de $\alpha$, ? poss?vel afirmar que a hip?tese nula est? negada e a vari?ncia do novo teste ?, portanto, inferior ? vari?ncia do processo original.  
-
-### Avaliando suposi??es do modelo
-A valida??o das suposi??es de um experimento ? um passo importante de uma an?lise de experimento. N?o apenas permite verific?-las e como tamb?m identificar poss?veis efeitos nos resultados encontrados, decorrentes de viola??es das premissas do planejamento experimental.
- 
-Ao fazer o teste da m?dia, foi suposta uma distribui??o normal das amostras. Para avaliar essa suposi??o, o teste de Shapiro-Wilk ? uma boa alternativa. Trata-se de um teste de normalidade que assume uma hip?tese nula de que a distribui??o de um conjunto de dados ? normal. O resultado do teste fornece um valor $p$ que, se menor que o n?vel $\alpha$ desejado, permite rejeitar a hip?tese nula. Para o m?todo padr?o dispon?vel no R, o valor de $p < 0,05$ indica que n?o ? uma distribui??o normal.
-
-Outro indicador interessante ? o _qqplot_ que ? um gr?fico em que se compara os quantis da distribui??o das amostras aos quantis de uma distribui??o normal. Ele fornece um bom indicativo do comportamento da distribui??o das amostras em rela??o a uma normal, permitindo avaliar o qu?o pr?ximo ? de uma normal. Ambos indicadores foram calculados para as amostras colhidas, bem como um histograma e um gr?fico de densidade.
-
-```{r modelSupOne, eval=FALSE, fig.cap="Compara??o dos quantis da distribui??o das amostras com os quantis de uma distribui??o normal", fig.width=8, message=FALSE, include=FALSE}
-library(car)
-car::qqPlot(t1.samples$cost,
-       pch=16,
-       cex=1.5,
-       las=1,
-       ylab = 'cost')
-
-shapiro.test(t1.samples$cost)
-```
-
-```{r histDensOne, eval=FALSE, fig.cap="Histograma e gr?fico de densidade das amostras colhidas para o teste da m?dia.", fig.width=8, message=FALSE, include=FALSE}
-library(cowplot,warn.conflicts = FALSE)
-
-theme_set(theme_cowplot(font_size=12))
-
-plot.hist <- ggplot(t1.samples, aes(x=cost)) +
-    geom_histogram(colour="black", fill="white") + background_grid(major = 'xy')
-
-plot.dens <- ggplot(t1.samples, aes(x=cost)) +
-    geom_density(alpha=.2, fill="#FF6666") +
-    background_grid(major = 'xy')
-
-plot_grid(plot.hist, plot.dens, labels = c('A','B'), ncol = 2)
-```
-
-Observando os resultados do teste de Saphiro-Wilk, verifica-se que $p = 4,22 \times 10^{-6} < 0,05$, isto ?, o teste indica que a distribui??o das amostras n?o segue uma distribui??o normal. Isso tamb?m ? observ?vel no _qqplot_, em que ? percept?vel que os quantis da distribui??o das amostras n?o est?o pr?ximos dos quantis normais em todo o intervalo. Contudo, uma boa parte dos quantis est? em uma regi?o quase normal, sendo que passa a fugir de um comportamento de uma normal quando o custo supera 60.
-
-Os gr?ficos da figura seguinte, o histograma e o gr?fico de densidade ajudam a ressaltar isso. No gr?fico de densidade, percebe-se um comportamento pr?ximo de uma normal at? o custo atingir 60. A partir desse valor, a fun??o de densidade apresenta dois picos que prejudicam bastante a premissa de normalidade.
-
-## Conclus?es e Recomenda??es
+## Conclusões e Recomendações
 
 O estudo conduzido nesse trabalho mirou avaliar o desempenho de uma nova vers?o de um software em compara??o a sua vers?o anterior, cujo custo de execu??o ? bem representado por uma distribui??o populacional de m?dia $\mu = 50$ e vari?ncia $\sigma^2=100$. Para tal, foram empregados m?todos estat?sticos provenientes das aulas da disciplina de Planejamento e An?lise de Experimentos em ensaios acerca da m?dia e da vari?ncia do custo de execu??o do novo software. No teste da m?dia foi empregado o teste Z, haja vista a premissa que o comportamento da fun??o era normal com vari?ncia semelhante ao da fun??o comparada. Foi empregado o Teste de Hip?teses com base em uma distribui??o $\chi^2$ para analisar a altera??o da vari?ncia no novo software.
 
@@ -310,10 +235,8 @@ Tendo ci?ncia disso, uma alternativa seria a execu??o do teste T, que considera 
 O Teste de Vari?ncia foi realizado seguindo-se a premissa de que a distribui??o segue uma tend?ncia $\chi^2$. Apesar de o teste afirmar que a vari?ncia da amostra pode ser considerada como inferior ? vari?ncia original $\sigma^2=100$, a premissa de que a distribui??o amostral pode ser considerada como normal foi refutada. Portanto, a modelagem dessa distribui??o em um padr?o qui-quadr?tico fica tamb?m contestada. Ainda, os intervalos de confian?a calculados est?o bem distante do valor da vari?ncia da amostra e esse valor ? bem inferior ao valor original.
 
 
-## Refer?ncias
-- R Man Pages - asbio package - https://rdrr.io/cran/asbio/man/power.z.test.html
+## Referências
+- R Man Pages - pwr package - https://www.rdocumentation.org/packages/pwr/versions/1.2-2/topics/pwr.t.test
 - R Man Pages - car package - https://rdrr.io/cran/car/man/qqPlot.html
-- Statistics R Tutorial - https://www.cyclismo.org/tutorial/R/confidence.html
-- Montgomery, Douglas C. - Applied statistics and probabiliy for engineers (3? Edi??o) - Cap?tulos 8,9
+- Montgomery, Douglas C. - Applied statistics and probabiliy for engineers (5ª Edição) - Capítulos 10
 - Notas de Aula - https://github.com/fcampelo/Design-and-Analysis-of-Experiments
-- Notas - https://edisciplinas.usp.br/pluginfile.php/2063723/mod_resource/content/0/Aula11-2016.pdf

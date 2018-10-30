@@ -21,8 +21,9 @@ if (!require(smoof, quietly = TRUE)){
         install.packages("smoof")
       }
 ```
-## Resumo - finalizar
-Este relatório é o terceiro dos Estudos de Casos na disciplina de Planejamento e Análise de Experimentos. O problema inicial consiste em duas
+## Resumo
+Este relatório é o terceiro dos Estudos de Casos na disciplina de Planejamento e Análise de Experimentos. O problema inicial consiste em duas variaçÕes do mesmo algorítmo avaliando a mesma população. Deseja-se analisar o efeito dessa variação afim de verificar o desempenho das alterações no algorítmo.
+O método da Evolução Diferencial é uma técnica que procura solucionar problemas de otimização contínua. É um método simples, porém poderoso, que avalia soluções de forma iterativa, buscando otimização global. 
 
 
 ## Planejamento do Experimento

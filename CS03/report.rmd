@@ -1,0 +1,246 @@
+---
+title: 'Estudo de Caso 02: Desempenho de uma nova versÃ£o de Software'
+author: "AndrÃ© Boechat(Checker), Mateus Pongelupe(Coordinator), Samuel Leite(Recorder)"
+date: "17 de Outubro de 2018"
+header-includes:
+  - \usepackage[brazilian]{babel}
+output:
+  pdf_document: 
+    fig_caption: yes
+---
+
+```{r setup,results='hide',warning=FALSE,echo=FALSE}
+# A few initial definitions just to make sure all required packages are installed. Change as needed.
+# NOTE: It may echo some weird messages to the PDF on the first compile (package installation messages). Run twice and the problem will (hopefully) go away.
+
+##if (!require(ggplot2, quietly = TRUE)){
+##    install.packages("ggplot2")
+##  }
+##if (!require(devtools, quietly = TRUE)){
+##      install.packages("devtools")
+##      }
+## if (!require(broom, quietly = TRUE)){
+##       devtools::install_github("dgrtwo/broom")
+##      }
+##if (!require(ExpDE, quietly = TRUE)){
+##        install.packages("ExpDE")
+##      }
+##if (!require(cowplot, quietly = TRUE, warn.conflicts = FALSE)){
+##        install.packages("cowplot")
+##}
+##if (!require(asbio, quietly = TRUE, warn.conflicts = FALSE)){
+##        install.packages("asbio")
+##}
+##if (!require(car, quietly = TRUE, warn.conflicts = FALSE)){
+##        install.packages("car")
+##}
+##if (!require(EnvStats, quietly = TRUE, warn.conflicts = FALSE)){
+##        install.packages("EnvStats")
+##}
+##rm(list = ls())
+```
+## Resumo - finalizar
+Este relatÃ³rio Ã© o segundo dos Estudos de Casos na disciplina disciplina de Planejamento e AnÃ¡lise de Experimentos. O problema inicial consiste em duas populaÃ§Ãµes, sendo elas: uma turma que cursou uma disciplina de Engenharia ElÃ©trica em 2016 e outra que cursou a mesma disciplina em 2017. O teste feito girou em torno do IMC dessas populaÃ§Ãµes, tentando de alguma forma testar o estilo de vida dos alunos com base nesse Ã­ndice.
+
+\textcolor{red}{INSERIR AQUI COMENTÃRIOS SOBRE O RESULTADO DO EXPERIMENTO}
+
+## Planejamento do Experimento
+Nesse experimento, estÃ¡ sendo avaliado o IMC de duas populaÃ§Ãµes diferentes. Cada populaÃ§Ã£o Ã© um grupo de alunos que cursou uma disciplica de Engenharia ElÃ©trica. Deseja-se comparar os IMC's dessas duas populaÃ§Ãµes. 
+
+O Ãndice de Massa Corporal, ou IMC, Ã© um valor calculado Ã  partir da altura e massa de cada indivÃ­duo, procurando estimar se sua altura e peso estÃ£o de acordo com padrÃµes saudÃ¡veis. PorÃ©m, existem vÃ¡rios estudos mostrando que nÃ£o Ã© possÃ­vel relacionar diretamente o IMC de uma pessoa com estar dentro ou fora do peso, uma vez que esse cÃ¡lculo nÃ£o levam em consideraÃ§Ãµes fatores como alimentaÃ§Ã£o ou percentual de gordura. O cÃ¡lculo de IMC Ã© dado pela equaÃ§Ã£o:
+$$IMC = \frac{w}{{h}^2}$$
+em que $w$ equivale ao peso do indivÃ­duo em **kg** e $h$ Ã  sua altura em **m**.
+
+O experimento realizado consiste na comparaÃ§Ã£o das mÃ©dias dos IMCs de cada uma das populaÃ§Ãµes, separando-as entre seus gÃªneros, masculino e feminino. Dessa forma, serÃ£o realizados dois testes: entre as populaÃ§Ãµes feminino e masculino de cada semestre dos alunos de Engenharia ElÃ©trica. 
+
+### Teste da mÃ©dia - em andamento
+Para avaliar se o IMC das populaÃ§Ãµes Ã© o mesmo, serÃ£o realizados testes de hipÃ³tese para a populaÃ§Ã£o feminina e outro para a populaÃ§Ã£o masculina. Para ambos os casos, serÃ£o realizados dois testes. O primeiro teste verificarÃ¡ se a mÃ©dia das populaÃ§Ãµes Ã© igual, tendo como hipÃ©tese nula conforme abaixo. A hipÃ³tese alternativa serÃ¡ unilateral, onde a diferenÃ§a das mÃ©dias Ã© menor que zero, ou seja, a populaÃ§Ã£o 2 tem mÃ©dia maior que a populaÃ§Ã£o 1. 
+$$\begin{cases} H_0: \mu_1-\mu_2 = 0&\\H_1: \mu_1-\mu_2<0\end{cases}$$
+
+O segundo teste de hipÃ³teses somente serÃ¡ necessÃ¡rio caso a hipÃ³tese alternativa tambÃ©m falhe, para verificar se a populaÃ§Ã£o 1 tem IMC maior que a populaÃ§Ã£o 2. Para esses teste, as hipÃ³teses serÃ£o: 
+$$\begin{cases} H_0: \mu_1-\mu_2 = 0&\\H_1: \mu_1-\mu_2>0\end{cases}$$
+
+Para esse teste, definiu-se um n?vel de significÃ¢ncia de $\alpha=0.01$, um efeito de relevÃ¢ncia mÃ­nimo $\delta^*=$ e uma potÃªncia desejada de $\pi = 1 - \beta = 0.8$. Os valores de mÃ©dia e variÃ¢ncia de cada populaÃ§Ã£o serÃ£o obtidos atravÃ©s dos dados coletados. 
+```{r definitions}
+h0.mean = 50
+h0.sd = sqrt(100)
+
+t1.alpha = 0.01
+t1.delta = 4
+t1.beta = 0.2
+t1.power = 1 - t1.beta
+```
+
+CONTINUAR ? PARTIR DAQUI
+Assumindo que a hip?tese nula $H_0$ se comporte com uma distribui??o de m?dia populacional $\mu=50$ e vari?ncia populacional $\sigma^2 = 100$, pode-se calcular o n?mero de amostras m?nimo a partir do teste Z, haja vista que a vari?ncia da hip?tese nula ? conhecida. Para fazer esse c?lculo, foi usado o pacote *asbio*:
+```{r nCalculus, warning=FALSE}
+library(asbio)
+n <- power.z.test(power = t1.power, alpha = t1.alpha, effect = t1.delta, 
+                  sigma = h0.sd, test = "one.tail")$n
+t1.N <- ceiling(n)
+cat("N: ", t1.N)
+```
+Assim, fazendo uso do teste Z, precisaremos de uma amostra de tamanho $N=63$ para executar o nosso teste com uma pot?ncia $\pi=0.8$. Por nossa hip?tese $H_1$ ser unidirecional, a regi?o cr?tica do teste Z pode ser determinada como:
+$$P(z_{\alpha} \leq Z_0 \; | \; H_0 \text{ seja verdadeira})$$
+Isto ?, para que a hip?tese nula seja rejeitada com um n?vel de confian?a de 99% ? preciso que $z_\alpha > Z_0$. 
+
+### Coleta de Dados e Tratamento de Dados - em andamento
+Os dados foram coletados Ã  partir de dois arquivos enviados. Nesses arquivos, estÃ£o contidos os valores para a altura e a massa de cada aluno. Os arquivos devem ser lidos em uma variÃ¡vel e entÃ£o separados de acordo com o seu gÃªnero e descartados de acordo com sua turma, caso aplicÃ¡vel. Esse Ãºltimo caso se refere Ã  parcela de alunos na turma 2016/2 que nÃ£o fazem parte do curso de Engenharia ElÃ©trica. 
+```{r dataCollection}
+input_file1 <- '20162.csv'
+input_file2 <- '20171.csv'
+
+# Importing files
+turma1<- read.csv(file = input_file1, header = T)
+turma2<- read.csv(file = input_file2, header = T)
+
+# Filtering PPGEE students
+turma1.ele <- turma1[ turma1$Course == 'PPGEE', c('Gender', 'Height', 'Weight')]
+
+# Separating values on genders
+turma1.f <- turma1.ele[ turma1.ele$Gender == 'F', c('Height', 'Weight')]
+turma1.m <- turma1.ele[ turma1.ele$Gender == 'M', c('Height', 'Weight')]
+
+turma2.f <- turma2[ turma2$Gender == 'F', c('Height', 'Weight')]
+turma2.m <- turma2[ turma2$Gender == 'M', c('Height', 'Weight')]
+```
+Tendo selecionado os dados de interesse, isto Ã©, apenas dos alunos de Engenharia ElÃ©trica, os mesmos foram separados por gÃªnero para efetuaÃ§Ã£o das comparaÃ§Ãµes. Em seguida, dado a fÃ³rmula do cÃ¡lculo de IMC jÃ¡ descrito anteriormente, calcula-se o mesmo para as populaÃ§Ãµes:
+
+```{r dataCollectionIMCCalculus}
+# Definition of IMC function
+imc <- function(h, w) {
+  return( w / ( h^2 ) )
+}
+
+applyIMC <- function(df) {
+  df$IMC <- apply(df, 1, function (x) imc(x['Height'], x['Weight']))
+  return(df)
+}
+
+##Calculating IMCs of populations
+turma1.f <- applyIMC(turma1.f)
+turma1.m <- applyIMC(turma1.m)
+turma2.f <- applyIMC(turma2.f)
+turma2.m <- applyIMC(turma2.m)
+```
+
+
+Segue abaixo a codifica??o dessas fun??es, bem como um exemplo da chamada de *generate\_n\_samples* para $N=10$:
+```{r dataCollectionNewRoutines, eval=FALSE, include=FALSE, results='hide'}
+#Generates one sample
+generate_sample <- function() {
+  return(ExpDE(mpo, mmu, mre, mse, mst, mpr,
+               showpars = list(show.iters = "none"))$Fbest);
+}
+
+#Generates n samples on the data.frame format
+generate_n_samples <- function(n) {
+  cost <- replicate(n, generate_sample())
+  return(data.frame(cost))
+}
+
+#Example for N=10
+generate_n_samples(10)
+```
+
+## An?lise Estat?stica
+
+### Teste da M?dia
+
+Dados os par?metros definidos na se??o *Planejamento do Experimento* para o teste da m?dia, foram recolhidas $N=63$ amostras e o teste foi executado nas linhas abaixo. O intervalo de confian?a tamb?m foi calculado, considerando uma distribui??o normal cuja vari?ncia populacional $\sigma^2=100$ ? conhecida.
+```{r testOne, eval=FALSE, include=FALSE}
+## Getting the samples
+t1.samples <- generate_n_samples(t1.N)
+## Writing samples to csv file
+write.csv(t1.samples, 'test-one.csv')
+
+## Test Z Execution
+t1.mean <- mean(t1.samples$cost)
+t1.sd <- sd(t1.samples$cost)
+z0 <- (t1.mean - h0.mean)/(h0.sd/sqrt(t1.N))
+t1.z_alpha <- qnorm(t1.alpha)
+
+## Confidence interval
+t1.error <- qnorm(1-(t1.alpha/2)) * h0.sd / sqrt(n)
+
+
+cat("\n",
+"Mean: ", t1.mean, "\n",
+"Z0: ", z0 ,"\n",
+"Zalpha: ",  t1.z_alpha ,"\n",
+"Confidence Interval: ", t1.mean - t1.error, " <= ", 
+                         t1.mean, " <= ", t1.mean + t1.error, "\n")
+```
+Como $Z_\alpha < Z_0$, conclui-se que n?o h? evid?ncias suficientes para rejeitar $H_0$ a um n?vel de confian?a de 99%. 
+
+### Teste da Vari?ncia
+Com os dados coletados e armazenados na vari?vel *t1.samples*, ? poss?vel verificar se o novo software ir? gerar dados com uma vari?ncia menor ou maior que aquela resultada no processo original. 
+
+O teste foi executado conforme explicado na se??o *Teste da Vari?ncia*. 
+
+```{r test2, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+library(EnvStats)
+varTest(unlist(t1.samples), alternative = "less", conf.level = 0.95, sigma.squared =100)
+## Foi utilizada a fun??o unlist(t1.samples) para garantir que a vari?vel t1.samples 
+## estivesse no data type correto.
+```
+
+Como o valor de $P$ calculado ? menor do que o valor de $\alpha$, ? poss?vel afirmar que a hip?tese nula est? negada e a vari?ncia do novo teste ?, portanto, inferior ? vari?ncia do processo original.  
+
+### Avaliando suposi??es do modelo
+A valida??o das suposi??es de um experimento ? um passo importante de uma an?lise de experimento. N?o apenas permite verific?-las e como tamb?m identificar poss?veis efeitos nos resultados encontrados, decorrentes de viola??es das premissas do planejamento experimental.
+ 
+Ao fazer o teste da m?dia, foi suposta uma distribui??o normal das amostras. Para avaliar essa suposi??o, o teste de Shapiro-Wilk ? uma boa alternativa. Trata-se de um teste de normalidade que assume uma hip?tese nula de que a distribui??o de um conjunto de dados ? normal. O resultado do teste fornece um valor $p$ que, se menor que o n?vel $\alpha$ desejado, permite rejeitar a hip?tese nula. Para o m?todo padr?o dispon?vel no R, o valor de $p < 0,05$ indica que n?o ? uma distribui??o normal.
+
+Outro indicador interessante ? o _qqplot_ que ? um gr?fico em que se compara os quantis da distribui??o das amostras aos quantis de uma distribui??o normal. Ele fornece um bom indicativo do comportamento da distribui??o das amostras em rela??o a uma normal, permitindo avaliar o qu?o pr?ximo ? de uma normal. Ambos indicadores foram calculados para as amostras colhidas, bem como um histograma e um gr?fico de densidade.
+
+```{r modelSupOne, eval=FALSE, fig.cap="Compara??o dos quantis da distribui??o das amostras com os quantis de uma distribui??o normal", fig.width=8, message=FALSE, include=FALSE}
+library(car)
+car::qqPlot(t1.samples$cost,
+       pch=16,
+       cex=1.5,
+       las=1,
+       ylab = 'cost')
+
+shapiro.test(t1.samples$cost)
+```
+
+```{r histDensOne, eval=FALSE, fig.cap="Histograma e gr?fico de densidade das amostras colhidas para o teste da m?dia.", fig.width=8, message=FALSE, include=FALSE}
+library(cowplot,warn.conflicts = FALSE)
+
+theme_set(theme_cowplot(font_size=12))
+
+plot.hist <- ggplot(t1.samples, aes(x=cost)) +
+    geom_histogram(colour="black", fill="white") + background_grid(major = 'xy')
+
+plot.dens <- ggplot(t1.samples, aes(x=cost)) +
+    geom_density(alpha=.2, fill="#FF6666") +
+    background_grid(major = 'xy')
+
+plot_grid(plot.hist, plot.dens, labels = c('A','B'), ncol = 2)
+```
+
+Observando os resultados do teste de Saphiro-Wilk, verifica-se que $p = 4,22 \times 10^{-6} < 0,05$, isto ?, o teste indica que a distribui??o das amostras n?o segue uma distribui??o normal. Isso tamb?m ? observ?vel no _qqplot_, em que ? percept?vel que os quantis da distribui??o das amostras n?o est?o pr?ximos dos quantis normais em todo o intervalo. Contudo, uma boa parte dos quantis est? em uma regi?o quase normal, sendo que passa a fugir de um comportamento de uma normal quando o custo supera 60.
+
+Os gr?ficos da figura seguinte, o histograma e o gr?fico de densidade ajudam a ressaltar isso. No gr?fico de densidade, percebe-se um comportamento pr?ximo de uma normal at? o custo atingir 60. A partir desse valor, a fun??o de densidade apresenta dois picos que prejudicam bastante a premissa de normalidade.
+
+## Conclus?es e Recomenda??es
+
+O estudo conduzido nesse trabalho mirou avaliar o desempenho de uma nova vers?o de um software em compara??o a sua vers?o anterior, cujo custo de execu??o ? bem representado por uma distribui??o populacional de m?dia $\mu = 50$ e vari?ncia $\sigma^2=100$. Para tal, foram empregados m?todos estat?sticos provenientes das aulas da disciplina de Planejamento e An?lise de Experimentos em ensaios acerca da m?dia e da vari?ncia do custo de execu??o do novo software. No teste da m?dia foi empregado o teste Z, haja vista a premissa que o comportamento da fun??o era normal com vari?ncia semelhante ao da fun??o comparada. Foi empregado o Teste de Hip?teses com base em uma distribui??o $\chi^2$ para analisar a altera??o da vari?ncia no novo software.
+
+Com rela??o ao teste da m?dia, ele falhou em refutar a hip?tese nula, isto ?, ele foi incapaz de afirmar ao n?vel de signific?ncia de 99% que a nova vers?o do software possui um custo m?dio de execu??o mais baixo. Portanto, o teste executado n?o suporta a hip?tese de que a nova vers?o do software possui um desempenho superior ? vers?o anterior em termos da m?dia do custo de execu??o. Apesar disso, a partir dos dados colhidos, foi estimado o intervalo de confian?a para a m?dia $\mu_1$, com um grau de confian?a de 99%: $\mu_1 \in [47.53 , 54.04]$. Quanto a esse intervalo, observa-se que o seu centro ? um pouco superior a 50 e que os limites do intervalo batem, aproximadamente, com o efeito de relev?ncia m?nima que este teste buscou detectar.       
+
+Posteriormente ao teste, em um momento de an?lise das premissas, verificou-se que a distribui??o das amostras n?o era normal. A viola??o dessa premissa explica um pouco como o resultado do experimento pode ter sido distorcido, talvez pelo uso de procedimentos n?o adequados para o caso. Entre esses procedimentos, pode-se citar o teste Z, em que foi considerada a vari?ncia populacional da vers?o anterior, e o procedimento de sele??o da amostra/c?lculo da m?dia.
+
+Tendo ci?ncia disso, uma alternativa seria a execu??o do teste T, que considera a vari?ncia da amostra retirada. Outra alternativa seria um tratamento/descarte de amostras esp?rias ou que est?o nas "pontas" da distribui??o das amostras, de forma a atenuar o efeito que essas observa??es t?m na distribui??o das amostras.
+
+O Teste de Vari?ncia foi realizado seguindo-se a premissa de que a distribui??o segue uma tend?ncia $\chi^2$. Apesar de o teste afirmar que a vari?ncia da amostra pode ser considerada como inferior ? vari?ncia original $\sigma^2=100$, a premissa de que a distribui??o amostral pode ser considerada como normal foi refutada. Portanto, a modelagem dessa distribui??o em um padr?o qui-quadr?tico fica tamb?m contestada. Ainda, os intervalos de confian?a calculados est?o bem distante do valor da vari?ncia da amostra e esse valor ? bem inferior ao valor original.
+
+
+## Refer?ncias
+- R Man Pages - asbio package - https://rdrr.io/cran/asbio/man/power.z.test.html
+- R Man Pages - car package - https://rdrr.io/cran/car/man/qqPlot.html
+- Statistics R Tutorial - https://www.cyclismo.org/tutorial/R/confidence.html
+- Montgomery, Douglas C. - Applied statistics and probabiliy for engineers (3? Edi??o) - Cap?tulos 8,9
+- Notas de Aula - https://github.com/fcampelo/Design-and-Analysis-of-Experiments
+- Notas - https://edisciplinas.usp.br/pluginfile.php/2063723/mod_resource/content/0/Aula11-2016.pdf

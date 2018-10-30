@@ -29,20 +29,19 @@ Este relatório é o terceiro dos Estudos de Casos na disciplina de Planejamento
 
 $$\begin{cases} H_0: \mu_1-\mu_2 = 0&\\H_1: \mu_1-\mu_2<0\end{cases}$$
 
-Para esse teste, definiu-se um nível de significancia de $\alpha=0.05$, uma mínima diferença de importância prática $d^* =\delta^*/\sigma= 0.5  $ e uma potência desejada de $\pi = 1 - \beta = 0.8$.
+Para esse teste, definiu-se um nível de significancia de $\alpha=0.05$, uma mínima diferença de importância prática $d^* =\delta^*/\sigma= 0.5$ e uma potência desejada de $\pi = 1 - \beta = 0.8$.
 
 ```{r definitions}
 alpha = 0.05
 d = 0.5
 beta = 0.2
-power = 1 - t1.beta
+power = 1 - beta
 ```
-
 
 
 ### Coleta de Dados e Tratamento de Dados
 
-```{r dataCollection}
+```{r dataCollection, eval=FALSE, include=FALSE}
 input_file1 <- '20162.csv'
 input_file2 <- '20171.csv'
 
@@ -66,7 +65,7 @@ turma2.m <- turma2[ turma2$Gender == 'M', c('Height', 'Weight')]
 
 ### Teste da M?dia
 
-Dados os par?metros definidos na se??o *Planejamento do Experimento* para o teste da m?dia, foram recolhidas $N=63$ amostras e o teste foi executado nas linhas abaixo. O intervalo de confian?a tamb?m foi calculado, considerando uma distribui??o normal cuja vari?ncia populacional $\sigma^2=100$ ? conhecida.
+Dados os par?metros definidos na se??o *Planejamento do Experimento* para o teste da m?dia, foram recolhidas $N=63$ amostras e o teste foi executado nas linhas abaixo. O intervalo de confian?a tamb?m foi calculado, considerando uma distribui??o normal cuja vari?ncia populacional $\sigma^2=100$ é conhecida.
 ```{r testOne, eval=FALSE, include=FALSE}
 ## Getting the samples
 t1.samples <- generate_n_samples(t1.N)

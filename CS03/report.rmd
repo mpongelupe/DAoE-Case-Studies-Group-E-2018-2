@@ -24,47 +24,111 @@ if (!require(smoof, quietly = TRUE)){
 ## Resumo
 Este relatório é o terceiro dos Estudos de Casos na disciplina de Planejamento e Análise de Experimentos. O problema inicial consiste em duas variaçÕes do mesmo algorítmo avaliando a mesma população. Deseja-se analisar o efeito dessa variação afim de verificar o desempenho das alterações no algorítmo.
 
-O método da Evolução Diferencial é uma técnica que procura solucionar problemas de otimização contínua. É um método simples, porém poderoso, que avalia soluções de forma iterativa, buscando otimização global. Ele é dotado de 3 passos, sendo ele: mutação, cruzamento e seleção. No primeiro, é feito a soma de um indivíduo base com a diferença de dois outros indivíduos aleatórios multiplicados por uma ponderação $F$. O vetor mutado é chamado de $V$. O cruzamento é uma intercalagem entre o vetor original e o vetor mutado, de forma que aumenta-se a variabilidade da sua população. O vetor intercalado é chamado de $U$. A seleção avalia qual o melhor indivíduo a ser escolhido, seja ele da população original ou da população cruzada. 
+O método da Evolução Diferencial (DE) é uma técnica que procura solucionar problemas de otimização contínua. É um método simples, porém poderoso, que avalia soluções de forma iterativa, buscando otimização global. Ele é dotado de 3 passos, sendo ele: mutação, cruzamento e seleção. No primeiro, é feito a soma de um indivíduo base com a diferença de dois outros indivíduos aleatórios multiplicados por uma ponderação $F$. O vetor mutado é chamado de $V$. O cruzamento é uma intercalagem entre o vetor original e o vetor mutado, de forma que aumenta-se a variabilidade da sua população. O vetor intercalado é chamado de $U$. A seleção avalia qual o melhor indivíduo a ser escolhido, seja ele da população original ou da população cruzada. 
 
 ## Planejamento do Experimento
 
-$$\begin{cases} H_0: \mu_1-\mu_2 = 0&\\H_1: \mu_1-\mu_2<0\end{cases}$$
+Será realizadO um experimento, nos quais parâmetros diferentes são submetidos ao realizar o método DE. Para o teste de hipóteses, avaliada a diferença entre as médias, denominada pelo parâmetro $\mu_d$.
+
+$$\begin{cases} H_0: \mu_D = 0&\\H_1: \mu_D <> 0\end{cases}$$
 
 Para esse teste, definiu-se um nível de significancia de $\alpha=0.05$, uma mínima diferença de importância prática $d^* =\delta^*/\sigma= 0.5$ e uma potência desejada de $\pi = 1 - \beta = 0.8$.
 
-```{r definitions}
+```{r definitions}, eval=FALSE, include=FALSE}
 alpha = 0.05
 d = 0.5
 beta = 0.2
 power = 1 - beta
 ```
 
+O tamanho da amostra é calculado utilizando-se dos parâmetros de teste requeridos e a função *power.t.test*. 
+```{r sampleNumber}, eval=FALSE, include=FALSE}
+n <- power.t.test(n=NULL,
+                  delta = d,
+                  sd = 1,
+                  sig.level = alpha,
+                  power = power,
+                  type="paired",
+                  alternative="two.sided")$n
+N <- ceiling(n)
+cat("N: ", N)
+```
 
-### Coleta de Dados e Tratamento de Dados
+### Coleta de Dados
+
+A coleta de dados será realizada através da função de Rosenbrock. Através do código abaixo, serão gerados os dados. 
+
+O valor para o número de avaliações por software será setado no valor padrão de 30.
 
 ```{r dataCollection, eval=FALSE, include=FALSE}
-input_file1 <- '20162.csv'
-input_file2 <- '20171.csv'
+n=30
 
-# Importing files
-turma1<- read.csv(file = input_file1, header = T)
-turma2<- read.csv(file = input_file2, header = T)
+suppressPackageStartupMessages(library(smoof))
 
-# Filtering PPGEE students
-turma1.ele <- turma1[ turma1$Course == 'PPGEE', c('Gender', 'Height', 'Weight')]
+getSamples <- function(n,dim) {
+  # This assingment makes fn a global variable
+  fn <<- function(X){
+    if(!is.matrix(X)) X <- matrix(X, nrow = 1) # <- if a single vector is passed as X
+    Y <- apply(X, MARGIN = 1,
+               FUN = smoof::makeRosenbrockFunction(dimensions = dim))
+    return(Y)
+  }
 
-# Separating values on genders
-turma1.f <- turma1.ele[ turma1.ele$Gender == 'F', c('Height', 'Weight')]
-turma1.m <- turma1.ele[ turma1.ele$Gender == 'M', c('Height', 'Weight')]
+  selpars <- list(name = "selection_standard")
+  stopcrit <- list(names = "stop_maxeval", maxevals = 5000 * dim, maxiter = 100 * dim)
+  probpars <- list(name = "fn", xmin = rep(-5, dim), xmax = rep(10, dim))
+  popsize = 5 * dim
+  
+  ## Config 1
+  recpars1 <- list(name = "recombination_lbga")
+  mutpars1 <- list(name = "mutation_rand", f = 4.5)
+  
+  ## Config 2
+  recpars2 <- list(name = "recombination_blxAlphaBeta", alpha = 0.1, beta = 0.4)
+  mutpars2 <- list(name = "mutation_rand", f = 3)
+  
+  library("ExpDE")
+  
+  suppressPackageStartupMessages(library(ExpDE))
+  
+  generate_sample <- function(mutpars, recpars, popsize, selpars, stopcrit, probpars) {
+    return(ExpDE(mutpars = mutpars,
+                 recpars = recpars,
+                 popsize = popsize,
+                 selpars = selpars,
+                 stopcrit = stopcrit,
+                 probpars = probpars,
+                 showpars = list(show.iters = "dots", showevery = 20))$Fbest);
+  }
+  
+  generate_n_samples <- function(n, mutpars, recpars) {
+    return(replicate(n, generate_sample(mutpars, recpars, popsize, selpars, stopcrit, probpars)))
+  }
+  
+  return(data.frame("A1" = generate_n_samples(n, mutpars1, recpars1), "A2" =  generate_n_samples(n, mutpars1, recpars2), "dim" = dim))
+   
+}
 
-turma2.f <- turma2[ turma2$Gender == 'F', c('Height', 'Weight')]
-turma2.m <- turma2[ turma2$Gender == 'M', c('Height', 'Weight')]
+generateAllSamples <- function(n_samples, N) {
+  rosenbrok_dim_interval <- 2:150
+  dimensions <- sort(sample(rosenbrok_dim_interval, N))
+  
+  result <- lapply(dimensions, FUN = function(x) {
+    write.csv(getSamples(n_samples, x), paste('samples-dim-', x, '.csv', sep = ''))
+  })
+}
+
+n_samples_per_instance <- 1
+N <- 2
+
+generateAllSamples(n_samples_per_instance, N)
+
 ```
 
 
 ## Análise Estatísstica
 
-### Teste da M?dia
+### Teste da Média
 
 Dados os par?metros definidos na se??o *Planejamento do Experimento* para o teste da m?dia, foram recolhidas $N=63$ amostras e o teste foi executado nas linhas abaixo. O intervalo de confian?a tamb?m foi calculado, considerando uma distribui??o normal cuja vari?ncia populacional $\sigma^2=100$ é conhecida.
 ```{r testOne, eval=FALSE, include=FALSE}

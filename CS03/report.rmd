@@ -138,13 +138,15 @@ Dados os parâmetros definidos na seçãoo *Planejamento do Experimento* para o 
 
 ### Avaliando suposições do modelo
 
-```{r histDensOne, eval=FALSE, fig.cap="Histograma e gr?fico de densidade das amostras colhidas para o teste da m?dia.", fig.width=8, message=FALSE, include=FALSE}
+```{r histDensOne, eval=FALSE, fig.width=8, message=FALSE, include=FALSE}
 
 ```
 
 
 
 ## Conclusões e Recomendações
+
+O teste realizado neste relatório serviu para avaliar o desempenho de dois algorítmos difentes avaliando uma mesma população. O método da Evolução Diferencial é um método de otimização, mas como ele apresenta parâmetros numéricos de entrada, deve também ter esses otimizados. Este relatório teve como objetivo analisar dois conjuntos parâmetros para realizar o método de convergencia DE para um mesmo conjunto de dados gerados e observar qual obteve uma maior otimização. 
 
 
 

@@ -130,47 +130,16 @@ generateAllSamples(n_samples_per_instance, N)
 
 ### Teste da Média
 
-Dados os par?metros definidos na se??o *Planejamento do Experimento* para o teste da m?dia, foram recolhidas $N=63$ amostras e o teste foi executado nas linhas abaixo. O intervalo de confian?a tamb?m foi calculado, considerando uma distribui??o normal cuja vari?ncia populacional $\sigma^2=100$ é conhecida.
+Dados os parâmetros definidos na seçãoo *Planejamento do Experimento* para o teste, foram analisadas $N=34$ amostras e o teste foi executado nas linhas abaixo. Foram utilizados valores diferentes para a análise DE, de acordo com o fornecido para o Grupo E. 
 ```{r testOne, eval=FALSE, include=FALSE}
-## Getting the samples
-t1.samples <- generate_n_samples(t1.N)
-## Writing samples to csv file
-write.csv(t1.samples, 'test-one.csv')
 
-## Test Z Execution
-t1.mean <- mean(t1.samples$cost)
-t1.sd <- sd(t1.samples$cost)
-z0 <- (t1.mean - h0.mean)/(h0.sd/sqrt(t1.N))
-t1.z_alpha <- qnorm(t1.alpha)
-
-## Confidence interval
-t1.error <- qnorm(1-(t1.alpha/2)) * h0.sd / sqrt(n)
-
-
-cat("\n",
-"Mean: ", t1.mean, "\n",
-"Z0: ", z0 ,"\n",
-"Zalpha: ",  t1.z_alpha ,"\n",
-"Confidence Interval: ", t1.mean - t1.error, " <= ", 
-                         t1.mean, " <= ", t1.mean + t1.error, "\n")
 ```
 
 
 ### Avaliando suposições do modelo
 
 ```{r histDensOne, eval=FALSE, fig.cap="Histograma e gr?fico de densidade das amostras colhidas para o teste da m?dia.", fig.width=8, message=FALSE, include=FALSE}
-library(cowplot,warn.conflicts = FALSE)
 
-theme_set(theme_cowplot(font_size=12))
-
-plot.hist <- ggplot(t1.samples, aes(x=cost)) +
-    geom_histogram(colour="black", fill="white") + background_grid(major = 'xy')
-
-plot.dens <- ggplot(t1.samples, aes(x=cost)) +
-    geom_density(alpha=.2, fill="#FF6666") +
-    background_grid(major = 'xy')
-
-plot_grid(plot.hist, plot.dens, labels = c('A','B'), ncol = 2)
 ```
 
 

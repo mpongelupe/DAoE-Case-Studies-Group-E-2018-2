@@ -34,7 +34,7 @@ $$\begin{cases} H_0: \mu_D = 0&\\H_1: \mu_D <> 0\end{cases}$$
 
 Para esse teste, definiu-se um nível de significancia de $\alpha=0.05$, uma mínima diferença de importância prática $d^* =\delta^*/\sigma= 0.5$ e uma potência desejada de $\pi = 1 - \beta = 0.8$.
 
-```{r definitions}, eval=FALSE, include=FALSE}
+```{r definitions}, include=FALSE}
 alpha = 0.05
 d = 0.5
 beta = 0.2
@@ -42,7 +42,7 @@ power = 1 - beta
 ```
 
 O tamanho da amostra é calculado utilizando-se dos parâmetros de teste requeridos e a função *power.t.test*. 
-```{r sampleNumber}, eval=FALSE, include=FALSE}
+```{r sampleNumber}, include=FALSE}
 n <- power.t.test(n=NULL,
                   delta = d,
                   sd = 1,
@@ -54,13 +54,11 @@ N <- ceiling(n)
 cat("N: ", N)
 ```
 
-### Coleta de Dados
-
-### Coleta de Dados
+## Coleta de Dados
 
 Para geração dos dados foi criada a rotina **generateAllSamples** que recebe o número de execuções de cada algoritmo por amostra e o número de amostras N calculado para o problema. Nessa função, são selecionadas aleatoriamente as dimensões das funções de Rosenbrock a serem avaliadas e os resultados são escritos em arquivos no formato *.csv*. Dessa forma, essa função é executada apenas uma vez para um dado tamanho amostral. O valor para o número de avaliações por software será setado no valor padrão de 30.
 
-```{r dataCollection}
+```{r dataCollection, evalv=FALSE}
 library("smoof")
 
 suppressPackageStartupMessages(library(smoof))
@@ -149,24 +147,254 @@ lapply(dimensions$dim, FUN = function(x) {
 
 ### Teste da Média
 
-Dados os parâmetros definidos na seçãoo *Planejamento do Experimento* para o teste, foram analisadas $N=34$ amostras e o teste foi executado nas linhas abaixo. Foram utilizados valores diferentes para a análise DE, de acordo com o fornecido para o Grupo E. 
-```{r testOne, eval=FALSE, include=FALSE}
+Dados os parâmetros definidos na seçãoo *Planejamento do Experimento* para o teste, foram analisadas $N=34$ amostras e o teste foi executado nas linhas abaixo. Foram utilizados valores diferentes para a anÃ¡lise DE, de acordo com o fornecido para o Grupo E. 
+
+Foi analisado se há alguma parametrização recomendada para um melhor desempenho, considerando que o algoritimo comparado seria de otmização.Também foi verificado a diferença em amplitude nos resultados encontrados, a diferença foi de aproximadamente x
+
+O tamanho da amostra a considerar nesta situação refere-se ao número de instâncias de problemas, e não necessariamente ao número de medidas repetidas dentro de problemas. 
+
+Observa se que o metodo de pareamento, permite eliminar problemas de ruido (disturbio) entre as amostras, uma vez que a analise ocorre sobre a  diferença entre elas, pontanto o disturbio em relação a um ponto médio, para dados gerados por uma mesma distribuição aleatória, tendem a ser parecidos.
+```{r testOne, include=FALSE}
+
+matriz.media <-matrix(nrow=35, ncol=3)
+matriz.media[1,1]<-"A1"
+matriz.media[1,2]<-"A2"
+matriz.media[1,3]<-"Dim"
+matriz.media
+
+dim<-read.csv("samples-dim-2.csv")
+
+matriz.media[2,1]<-mean(dim$A1)
+matriz.media[2,2]<-mean(dim$A2)
+matriz.media[2,3]<-"2"
+
+dim<-read.csv("samples-dim-5.csv")
+
+matriz.media[3,1]<-mean(dim$A1)
+matriz.media[3,2]<-mean(dim$A2)
+matriz.media[3,3]<-"5"
+
+dim<-read.csv("samples-dim-15.csv")
+
+matriz.media[4,1]<-mean(dim$A1)
+matriz.media[4,2]<-mean(dim$A2)
+matriz.media[4,3]<-"15"
+
+dim<-read.csv("samples-dim-21.csv")
+
+matriz.media[5,1]<-mean(dim$A1)
+matriz.media[5,2]<-mean(dim$A2)
+matriz.media[5,3]<-"21"
+
+dim<-read.csv("samples-dim-24.csv")
+
+matriz.media[6,1]<-mean(dim$A1)
+matriz.media[6,2]<-mean(dim$A2)
+matriz.media[6,3]<-"24"
+
+dim<-read.csv("samples-dim-26.csv")
+
+matriz.media[7,1]<-mean(dim$A1)
+matriz.media[7,2]<-mean(dim$A2)
+matriz.media[7,3]<-"26"
+
+dim<-read.csv("samples-dim-46.csv")
+
+matriz.media[8,1]<-mean(dim$A1)
+matriz.media[8,2]<-mean(dim$A2)
+matriz.media[8,3]<-"46"
+
+dim<-read.csv("samples-dim-50.csv")
+
+matriz.media[9,1]<-mean(dim$A1)
+matriz.media[9,2]<-mean(dim$A2)
+matriz.media[9,3]<-"50"
+
+dim<-read.csv("samples-dim-54.csv")
+
+matriz.media[10,1]<-mean(dim$A1)
+matriz.media[10,2]<-mean(dim$A2)
+matriz.media[10,3]<-"54"
+
+dim<-read.csv("samples-dim-55.csv")
+
+matriz.media[11,1]<-mean(dim$A1)
+matriz.media[11,2]<-mean(dim$A2)
+matriz.media[11,3]<-"55"
+
+dim<-read.csv("samples-dim-56.csv")
+
+matriz.media[12,1]<-mean(dim$A1)
+matriz.media[12,2]<-mean(dim$A2)
+matriz.media[12,3]<-"56"
+
+dim<-read.csv("samples-dim-57.csv")
+
+matriz.media[13,1]<-mean(dim$A1)
+matriz.media[13,2]<-mean(dim$A2)
+matriz.media[13,3]<-"57"
+
+dim<-read.csv("samples-dim-58.csv")
+
+matriz.media[14,1]<-mean(dim$A1)
+matriz.media[14,2]<-mean(dim$A2)
+matriz.media[14,3]<-"58"
+
+dim<-read.csv("samples-dim-59.csv")
+
+matriz.media[15,1]<-mean(dim$A1)
+matriz.media[15,2]<-mean(dim$A2)
+matriz.media[15,3]<-"59"
+
+dim<-read.csv("samples-dim-64.csv")
+
+matriz.media[16,1]<-mean(dim$A1)
+matriz.media[16,2]<-mean(dim$A2)
+matriz.media[16,3]<-"64"
+
+dim<-read.csv("samples-dim-66.csv")
+
+matriz.media[17,1]<-mean(dim$A1)
+matriz.media[17,2]<-mean(dim$A2)
+matriz.media[17,3]<-"66"
+
+dim<-read.csv("samples-dim-69.csv")
+
+matriz.media[18,1]<-mean(dim$A1)
+matriz.media[18,2]<-mean(dim$A2)
+matriz.media[18,3]<-"69"
+
+dim<-read.csv("samples-dim-70.csv")
+
+matriz.media[19,1]<-mean(dim$A1)
+matriz.media[19,2]<-mean(dim$A2)
+matriz.media[19,3]<-"70"
+
+dim<-read.csv("samples-dim-73.csv")
+
+matriz.media[20,1]<-mean(dim$A1)
+matriz.media[20,2]<-mean(dim$A2)
+matriz.media[20,3]<-"73"
+
+dim<-read.csv("samples-dim-78.csv")
+
+matriz.media[21,1]<-mean(dim$A1)
+matriz.media[21,2]<-mean(dim$A2)
+matriz.media[21,3]<-"78"
+
+dim<-read.csv("samples-dim-79.csv")
+
+matriz.media[22,1]<-mean(dim$A1)
+matriz.media[22,2]<-mean(dim$A2)
+matriz.media[22,3]<-"79"
+
+dim<-read.csv("samples-dim-82.csv")
+
+matriz.media[23,1]<-mean(dim$A1)
+matriz.media[23,2]<-mean(dim$A2)
+matriz.media[23,3]<-"82"
+
+dim<-read.csv("samples-dim-83.csv")
+
+matriz.media[24,1]<-mean(dim$A1)
+matriz.media[24,2]<-mean(dim$A2)
+matriz.media[24,3]<-"83"
+
+dim<-read.csv("samples-dim-91.csv")
+
+matriz.media[25,1]<-mean(dim$A1)
+matriz.media[25,2]<-mean(dim$A2)
+matriz.media[25,3]<-"91"
+
+dim<-read.csv("samples-dim-92.csv")
+
+matriz.media[26,1]<-mean(dim$A1)
+matriz.media[26,2]<-mean(dim$A2)
+matriz.media[26,3]<-"92"
+
+dim<-read.csv("samples-dim-94.csv")
+
+matriz.media[27,1]<-mean(dim$A1)
+matriz.media[27,2]<-mean(dim$A2)
+matriz.media[27,3]<-"94"
+
+dim<-read.csv("samples-dim-97.csv")
+
+matriz.media[28,1]<-mean(dim$A1)
+matriz.media[28,2]<-mean(dim$A2)
+matriz.media[28,3]<-"97"
+
+dim<-read.csv("samples-dim-113.csv")
+
+matriz.media[29,1]<-mean(dim$A1)
+matriz.media[29,2]<-mean(dim$A2)
+matriz.media[29,3]<-"113"
+
+dim<-read.csv("samples-dim-117.csv")
+
+matriz.media[30,1]<-mean(dim$A1)
+matriz.media[30,2]<-mean(dim$A2)
+matriz.media[30,3]<-"117"
+
+dim<-read.csv("samples-dim-128.csv")
+
+matriz.media[31,1]<-mean(dim$A1)
+matriz.media[31,2]<-mean(dim$A2)
+matriz.media[31,3]<-"128"
+
+dim<-read.csv("samples-dim-131.csv")
+
+matriz.media[32,1]<-mean(dim$A1)
+matriz.media[32,2]<-mean(dim$A2)
+matriz.media[32,3]<-"131"
+
+dim<-read.csv("samples-dim-136.csv")
+
+matriz.media[33,1]<-mean(dim$A1)
+matriz.media[33,2]<-mean(dim$A2)
+matriz.media[33,3]<-"136"
+
+dim<-read.csv("samples-dim-145.csv")
+
+matriz.media[34,1]<-mean(dim$A1)
+matriz.media[34,2]<-mean(dim$A2)
+matriz.media[34,3]<-"145"
+
+dim<-read.csv("samples-dim-149.csv")
+
+matriz.media[35,1]<-mean(dim$A1)
+matriz.media[35,2]<-mean(dim$A2)
+matriz.media[35,3]<-"149"
+
+write.table(matriz.media, file="media.csv", row.names=FALSE, col.names = FALSE, sep=",")
+
+medias <- read.csv("media.csv", sep=",", dec=".")
+t.test(medias$A1, medias$A2, paired = TRUE, conf.level = alpha, alternative = "two.sided")
 
 ```
 
+O histograma abaixo mostra a comparação das médias calculadas pelos algorítmos. 
 
-### Avaliando suposições do modelo
-
-```{r histDensOne, eval=FALSE, fig.width=8, message=FALSE, include=FALSE}
+```{r modelSupOne,fig.width=8,echo=TRUE,message=FALSE,fig.cap="Histograma da diferença de performance" }
+#Plot de Diferencas
+Diferenca = medias$A1 - medias$A2
+plot(Diferenca, pch = 34, ylab="Diferença Algoritmo A1-A2")
+abline(0,0, col="blue", lwd=2)
+plot(medias$A1, medias$A2, pch=34, xlab="Algoritmo A1", ylab="Algoritmo A2")
+abline(0,1,col="blue", lwd=2)
+hist(Diferenca, col="gray",main="Histograma da diferença de performance", xlab="Diferença")
 
 ```
-
-
 
 ## Conclusões e Recomendações
 
 O teste realizado neste relatório serviu para avaliar o desempenho de dois algorítmos difentes avaliando uma mesma população. O método da Evolução Diferencial é um método de otimização, mas como ele apresenta parâmetros numéricos de entrada, deve também ter esses otimizados. Este relatório teve como objetivo analisar dois conjuntos parâmetros para realizar o método de convergencia DE para um mesmo conjunto de dados gerados e observar qual obteve uma maior otimização. 
 
+Esse método é fortemente recomendado, quando há uma correlação forte entre as amostras, casos por exemplo de condições experimentais heterogeneas).
+
+Através dos testes realizados, é possível perceber que ambas as configuraçes utilizadas no método DE apresentaram resultados que, à partir do Teste T de médias, são similares. Portanto, as alterações não foram efetivas. 
+
+O tempo computacional para realizar a geração de dados e o processamento no "DE" foram um impecilho que geraram um certo atraso na realização do teste. Tornou-se assim inviável propor novos parâmetros para realizar a otimização.
 
 
 ## Referências

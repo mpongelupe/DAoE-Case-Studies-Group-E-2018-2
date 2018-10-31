@@ -56,17 +56,18 @@ cat("N: ", N)
 
 ### Coleta de Dados
 
-A coleta de dados será realizada através da função de Rosenbrock. Através do código abaixo, serão gerados os dados. 
+### Coleta de Dados
 
-O valor para o número de avaliações por software será setado no valor padrão de 30.
+Para geração dos dados foi criada a rotina **generateAllSamples** que recebe o número de execuções de cada algoritmo por amostra e o número de amostras N calculado para o problema. Nessa função, são selecionadas aleatoriamente as dimensões das funções de Rosenbrock a serem avaliadas e os resultados são escritos em arquivos no formato *.csv*. Dessa forma, essa função é executada apenas uma vez para um dado tamanho amostral. O valor para o número de avaliações por software será setado no valor padrão de 30.
 
-```{r dataCollection, eval=FALSE, include=FALSE}
-n=30
+```{r dataCollection}
+library("smoof")
 
 suppressPackageStartupMessages(library(smoof))
 
 getSamples <- function(n,dim) {
   # This assingment makes fn a global variable
+  # This function is created dinamically for each dimension
   fn <<- function(X){
     if(!is.matrix(X)) X <- matrix(X, nrow = 1) # <- if a single vector is passed as X
     Y <- apply(X, MARGIN = 1,
@@ -78,19 +79,20 @@ getSamples <- function(n,dim) {
   stopcrit <- list(names = "stop_maxeval", maxevals = 5000 * dim, maxiter = 100 * dim)
   probpars <- list(name = "fn", xmin = rep(-5, dim), xmax = rep(10, dim))
   popsize = 5 * dim
-  
+
   ## Config 1
   recpars1 <- list(name = "recombination_lbga")
   mutpars1 <- list(name = "mutation_rand", f = 4.5)
-  
+
   ## Config 2
   recpars2 <- list(name = "recombination_blxAlphaBeta", alpha = 0.1, beta = 0.4)
   mutpars2 <- list(name = "mutation_rand", f = 3)
-  
+
   library("ExpDE")
-  
+
   suppressPackageStartupMessages(library(ExpDE))
-  
+
+  # Extracted one execution of the DE algorithm
   generate_sample <- function(mutpars, recpars, popsize, selpars, stopcrit, probpars) {
     return(ExpDE(mutpars = mutpars,
                  recpars = recpars,
@@ -100,31 +102,48 @@ getSamples <- function(n,dim) {
                  probpars = probpars,
                  showpars = list(show.iters = "dots", showevery = 20))$Fbest);
   }
-  
+
+  # Executes n times a given configuration of the DE algorithm
   generate_n_samples <- function(n, mutpars, recpars) {
     return(replicate(n, generate_sample(mutpars, recpars, popsize, selpars, stopcrit, probpars)))
   }
-  
+
+  # Runs n times both DE algorithms
   return(data.frame("A1" = generate_n_samples(n, mutpars1, recpars1), "A2" =  generate_n_samples(n, mutpars1, recpars2), "dim" = dim))
-   
+
 }
 
 generateAllSamples <- function(n_samples, N) {
   rosenbrok_dim_interval <- 2:150
   dimensions <- sort(sample(rosenbrok_dim_interval, N))
-  
+
   result <- lapply(dimensions, FUN = function(x) {
-    write.csv(getSamples(n_samples, x), paste('samples-dim-', x, '.csv', sep = ''))
+    write.csv(getSamples(n_samples, x), paste('samples-dim-', x, '.csv', sep = ''), row.names=FALSE)
   })
+  write.csv(data.frame("dim" = dimensions), 'dimensions.csv', row.names=FALSE)
 }
 
-n_samples_per_instance <- 1
-N <- 2
 
-generateAllSamples(n_samples_per_instance, N)
+dimensionsFile <- 'dimensions.csv'
+nTestsPerSample <- 30
 
+# if dimension files does not exist, gets all samples
+if(!file.exists(dimensionsFile)) {
+  generateAllSamples(nTestsPerSample, N)
+}
 ```
 
+Como os dados foram gerados apenas uma vez, devido ao tempo requerido para tal, o processamento dos dados foi feito a partir da leitura dos arquivos *.csv* produzidos. Assim, todos os dados salvos para experimento, estão presentes na variável *dataFrame*.
+
+```{r dataCollection2, echo=TRUE, results = 'hide'}
+dimensions <- read.csv(file = dimensionsFile, header = T)
+dataFrame <- data.frame('A1' = character(), 'A2' = character(), 'dim' = character(), stringsAsFactors = FALSE)
+lapply(dimensions$dim, FUN = function(x) {
+  fileName <- paste('samples-dim-', x, '.csv', sep = '')
+  data <- read.csv(file = fileName, header = T)
+  dataFrame <<- rbind(dataFrame, data)
+})
+```
 
 ## Análise Estatísstica
 

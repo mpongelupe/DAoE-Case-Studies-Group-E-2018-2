@@ -392,7 +392,7 @@ O teste realizado neste relatório serviu para avaliar o desempenho de dois algo
 
 Esse método é fortemente recomendado, quando há uma correlação forte entre as amostras, casos por exemplo de condições experimentais heterogeneas).
 
-Através dos testes realizados, é possível perceber que ambas as configuraçes utilizadas no método DE apresentaram resultados que, à partir do Teste T de médias, são similares. Portanto, as alterações não foram efetivas. 
+Através dos testes realizados, é possível perceber que ambas as configuraçes utilizadas no método DE apresentaram resultados que, à partir do Teste T de médias, não são similares. À partir dos gráficos é possível perceber que há uma tendência de redução dos valores calculados à medida que há um aumento da dimensão testada. Portanto, as alterações foram efetivas. 
 
 O tempo computacional para realizar a geração de dados e o processamento no "DE" foram um impecilho que geraram um certo atraso na realização do teste. Tornou-se assim inviável propor novos parâmetros para realizar a otimização.
 

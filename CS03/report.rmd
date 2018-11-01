@@ -1,6 +1,6 @@
 ---
 title: 'Estudo de Caso 03: Comparação de desempenho de duas configurações de um algoritmo de otimização'
-author: "Augusto (Checker), Mateus Pongelupe(Coordinator), Samuel Leite(Recorder)"
+author: "André Boechat (Checker), Augusto (Checker), Mateus Pongelupe(Coordinator), Samuel Leite(Recorder)"
 date: "30 de Outubro de 2018"
 header-includes:
   - \usepackage[brazilian]{babel}
@@ -34,7 +34,7 @@ $$\begin{cases} H_0: \mu_D = 0&\\H_1: \mu_D <> 0\end{cases}$$
 
 Para esse teste, definiu-se um nível de significancia de $\alpha=0.05$, uma mínima diferença de importância prática $d^* =\delta^*/\sigma= 0.5$ e uma potência desejada de $\pi = 1 - \beta = 0.8$.
 
-```{r definitions}, include=FALSE}
+```{r definitions}
 alpha = 0.05
 d = 0.5
 beta = 0.2
@@ -42,7 +42,7 @@ power = 1 - beta
 ```
 
 O tamanho da amostra é calculado utilizando-se dos parâmetros de teste requeridos e a função *power.t.test*. 
-```{r sampleNumber}, include=FALSE}
+```{r sampleNumber}
 n <- power.t.test(n=NULL,
                   delta = d,
                   sd = 1,
@@ -58,7 +58,7 @@ cat("N: ", N)
 
 Para geração dos dados foi criada a rotina **generateAllSamples** que recebe o número de execuções de cada algoritmo por amostra e o número de amostras N calculado para o problema. Nessa função, são selecionadas aleatoriamente as dimensões das funções de Rosenbrock a serem avaliadas e os resultados são escritos em arquivos no formato *.csv*. Dessa forma, essa função é executada apenas uma vez para um dado tamanho amostral. O valor para o número de avaliações por software será setado no valor padrão de 30.
 
-```{r dataCollection, evalv=FALSE}
+```{r dataCollection}
 library("smoof")
 
 suppressPackageStartupMessages(library(smoof))
@@ -147,14 +147,14 @@ lapply(dimensions$dim, FUN = function(x) {
 
 ### Teste da Média
 
-Dados os parâmetros definidos na seçãoo *Planejamento do Experimento* para o teste, foram analisadas $N=34$ amostras e o teste foi executado nas linhas abaixo. Foram utilizados valores diferentes para a anÃ¡lise DE, de acordo com o fornecido para o Grupo E. 
+Dados os parâmetros definidos na seção *Planejamento do Experimento* para o teste, foram analisadas $N=34$ amostras e o teste foi executado nas linhas abaixo. Foram utilizados valores diferentes para a anÃ¡lise DE, de acordo com o fornecido para o Grupo E. 
 
-Foi analisado se há alguma parametrização recomendada para um melhor desempenho, considerando que o algoritimo comparado seria de otmização.Também foi verificado a diferença em amplitude nos resultados encontrados, a diferença foi de aproximadamente x
+Foi analisado se há alguma parametrização recomendada para um melhor desempenho, considerando que o algoritimo comparado seria de otmização.Também foi verificado a diferença em amplitude nos resultados encontrados.
 
 O tamanho da amostra a considerar nesta situação refere-se ao número de instâncias de problemas, e não necessariamente ao número de medidas repetidas dentro de problemas. 
 
 Observa se que o metodo de pareamento, permite eliminar problemas de ruido (disturbio) entre as amostras, uma vez que a analise ocorre sobre a  diferença entre elas, pontanto o disturbio em relação a um ponto médio, para dados gerados por uma mesma distribuição aleatória, tendem a ser parecidos.
-```{r testOne, include=FALSE}
+```{r testOne, echo=TRUE, results = 'hide'}
 
 matriz.media <-matrix(nrow=35, ncol=3)
 matriz.media[1,1]<-"A1"
@@ -367,7 +367,9 @@ matriz.media[35,2]<-mean(dim$A2)
 matriz.media[35,3]<-"149"
 
 write.table(matriz.media, file="media.csv", row.names=FALSE, col.names = FALSE, sep=",")
+```
 
+```{r testEx}
 medias <- read.csv("media.csv", sep=",", dec=".")
 t.test(medias$A1, medias$A2, paired = TRUE, conf.level = alpha, alternative = "two.sided")
 
@@ -398,9 +400,7 @@ O tempo computacional para realizar a geração de dados e o processamento no "D
 
 
 ## Referências
-- R Man Pages - asbio package - https://rdrr.io/cran/asbio/man/power.z.test.html
-- R Man Pages - car package - https://rdrr.io/cran/car/man/qqPlot.html
 - Statistics R Tutorial - https://www.cyclismo.org/tutorial/R/confidence.html
-- Montgomery, Douglas C. - Applied statistics and probabiliy for engineers (3? Edi??o) - Cap?tulos 8,9
+- Montgomery, Douglas C. - Applied statistics and probabiliy for engineers (3rd Edition) - Cap?tulos 8,9
 - Notas de Aula - https://github.com/fcampelo/Design-and-Analysis-of-Experiments
 - Notas - https://edisciplinas.usp.br/pluginfile.php/2063723/mod_resource/content/0/Aula11-2016.pdf
